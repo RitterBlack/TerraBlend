@@ -1,5 +1,7 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Rendering;
 using System.Collections.Generic;
 
 namespace CustomShaderGUI
@@ -463,3 +465,4 @@ namespace CustomShaderGUI
         }
     }
 }
+#endif

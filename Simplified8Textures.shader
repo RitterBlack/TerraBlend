@@ -137,7 +137,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         #pragma multi_compile_fog
         #pragma multi_compile_instancing
         #pragma instancing_options renderinglayer
-        #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
 
         // Material properties
         CBUFFER_START(UnityPerMaterial)
@@ -307,10 +306,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-
-                #ifdef LOD_FADE_CROSSFADE
-                    LODFadeCrossFade(IN.positionCS);
-                #endif
 
                 // Sample control textures
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
@@ -799,7 +794,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
-                float3 tangentWS : TEXCOORD2;
+                float3 tangentWS : TEXcoord2;
                 float3 bitangentWS : TEXCOORD3;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
@@ -941,10 +936,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-
-                #ifdef LOD_FADE_CROSSFADE
-                    LODFadeCrossFade(IN.positionCS);
-                #endif
 
                 // Sample control textures
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
