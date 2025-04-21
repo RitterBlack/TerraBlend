@@ -1,1 +1,1 @@
-This shader maked in Grok 3
+This shader was made in Grok 3
