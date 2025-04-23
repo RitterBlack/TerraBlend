@@ -85,6 +85,9 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         // Specular color
         _SpecularColor("Specular Color", Color) = (0,0,0,0)
 
+        // Mipmap bias control
+        _MipMapBias("MipMap Bias", Range(-2, 2)) = 0
+
         // Toggles for additional features
         [Toggle(ENABLE_NORMAL_INTENSITY)] _EnableNormalIntensity("Normal Intensity", Float) = 1
 
@@ -171,6 +174,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7;
             float _NormalIntensity0, _NormalIntensity1, _NormalIntensity2, _NormalIntensity3;
             float _NormalIntensity4, _NormalIntensity5, _NormalIntensity6, _NormalIntensity7;
+            float _MipMapBias;
             float4 _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3;
             float4 _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7;
             float4 _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3;
@@ -310,8 +314,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 // Sample control textures
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float2 uvControlExtra = TRANSFORM_TEX(IN.uv, _ControlExtra);
-                float4 weights0 = SAMPLE_TEXTURE2D(_Control, sampler_Linear_Clamp, uvControl);
-                float4 weights1 = SAMPLE_TEXTURE2D(_ControlExtra, sampler_Linear_Clamp, uvControlExtra);
+                float4 weights0 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_ControlExtra, sampler_Linear_Clamp, uvControlExtra, _MipMapBias);
 
                 // UVs for textures
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
@@ -331,29 +335,29 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                // Sample albedo textures
-                float4 tex0 = SAMPLE_TEXTURE2D(_Splat0, sampler_Linear_Repeat, uv0);
-                float4 tex1 = SAMPLE_TEXTURE2D(_Splat1, sampler_Linear_Repeat, uv1);
-                float4 tex2 = SAMPLE_TEXTURE2D(_Splat2, sampler_Linear_Repeat, uv2);
-                float4 tex3 = SAMPLE_TEXTURE2D(_Splat3, sampler_Linear_Repeat, uv3);
-                float4 tex4 = SAMPLE_TEXTURE2D(_Splat4, sampler_Linear_Repeat, uv4);
-                float4 tex5 = SAMPLE_TEXTURE2D(_Splat5, sampler_Linear_Repeat, uv5);
-                float4 tex6 = SAMPLE_TEXTURE2D(_Splat6, sampler_Linear_Repeat, uv6);
-                float4 tex7 = SAMPLE_TEXTURE2D(_Splat7, sampler_Linear_Repeat, uv7);
+                // Sample albedo textures with mipmap bias
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
 
                 // Blend albedo
                 float4 albedo = BlendTextures(weights0, weights1, tex0, tex1, tex2, tex3, tex4, tex5, tex6, tex7);
                 float3 baseColor = albedo.rgb;
 
-                // Sample normal maps
-                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal0, sampler_Linear_Repeat, uv0), 1.0);
-                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal1, sampler_Linear_Repeat, uv1), 1.0);
-                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal2, sampler_Linear_Repeat, uv2), 1.0);
-                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal3, sampler_Linear_Repeat, uv3), 1.0);
-                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal4, sampler_Linear_Repeat, uv4), 1.0);
-                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal5, sampler_Linear_Repeat, uv5), 1.0);
-                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal6, sampler_Linear_Repeat, uv6), 1.0);
-                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal7, sampler_Linear_Repeat, uv7), 1.0);
+                // Sample normal maps with mipmap bias
+                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
+                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
+                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
+                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
+                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
+                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
+                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
+                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
 
                 #ifdef ENABLE_NORMAL_INTENSITY
                     normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
@@ -377,15 +381,15 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float3 normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
                 normalWS = NormalizeNormalPerPixel(normalWS);
 
-                // Sample mask maps
-                float4 maskMap0 = SAMPLE_TEXTURE2D(_MaskMap0, sampler_Linear_Repeat, uvMask0);
-                float4 maskMap1 = SAMPLE_TEXTURE2D(_MaskMap1, sampler_Linear_Repeat, uvMask1);
-                float4 maskMap2 = SAMPLE_TEXTURE2D(_MaskMap2, sampler_Linear_Repeat, uvMask2);
-                float4 maskMap3 = SAMPLE_TEXTURE2D(_MaskMap3, sampler_Linear_Repeat, uvMask3);
-                float4 maskMap4 = SAMPLE_TEXTURE2D(_MaskMap4, sampler_Linear_Repeat, uvMask4);
-                float4 maskMap5 = SAMPLE_TEXTURE2D(_MaskMap5, sampler_Linear_Repeat, uvMask5);
-                float4 maskMap6 = SAMPLE_TEXTURE2D(_MaskMap6, sampler_Linear_Repeat, uvMask6);
-                float4 maskMap7 = SAMPLE_TEXTURE2D(_MaskMap7, sampler_Linear_Repeat, uvMask7);
+                // Sample mask maps with mipmap bias
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
 
                 // Process mask maps
                 float metallic[8];
@@ -598,8 +602,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
 
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float2 uvControlExtra = TRANSFORM_TEX(IN.uv, _ControlExtra);
-                float4 weights0 = SAMPLE_TEXTURE2D(_Control, sampler_Linear_Clamp, uvControl);
-                float4 weights1 = SAMPLE_TEXTURE2D(_ControlExtra, sampler_Linear_Clamp, uvControlExtra);
+                float4 weights0 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_ControlExtra, sampler_Linear_Clamp, uvControlExtra, _MipMapBias);
 
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
                 float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
@@ -610,14 +614,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                float4 tex0 = SAMPLE_TEXTURE2D(_Splat0, sampler_Linear_Repeat, uv0);
-                float4 tex1 = SAMPLE_TEXTURE2D(_Splat1, sampler_Linear_Repeat, uv1);
-                float4 tex2 = SAMPLE_TEXTURE2D(_Splat2, sampler_Linear_Repeat, uv2);
-                float4 tex3 = SAMPLE_TEXTURE2D(_Splat3, sampler_Linear_Repeat, uv3);
-                float4 tex4 = SAMPLE_TEXTURE2D(_Splat4, sampler_Linear_Repeat, uv4);
-                float4 tex5 = SAMPLE_TEXTURE2D(_Splat5, sampler_Linear_Repeat, uv5);
-                float4 tex6 = SAMPLE_TEXTURE2D(_Splat6, sampler_Linear_Repeat, uv6);
-                float4 tex7 = SAMPLE_TEXTURE2D(_Splat7, sampler_Linear_Repeat, uv7);
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
 
                 float4 albedo = BlendTextures(weights0, weights1, tex0, tex1, tex2, tex3, tex4, tex5, tex6, tex7);
 
@@ -631,14 +635,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                float4 maskMap0 = SAMPLE_TEXTURE2D(_MaskMap0, sampler_Linear_Repeat, uvMask0);
-                float4 maskMap1 = SAMPLE_TEXTURE2D(_MaskMap1, sampler_Linear_Repeat, uvMask1);
-                float4 maskMap2 = SAMPLE_TEXTURE2D(_MaskMap2, sampler_Linear_Repeat, uvMask2);
-                float4 maskMap3 = SAMPLE_TEXTURE2D(_MaskMap3, sampler_Linear_Repeat, uvMask3);
-                float4 maskMap4 = SAMPLE_TEXTURE2D(_MaskMap4, sampler_Linear_Repeat, uvMask4);
-                float4 maskMap5 = SAMPLE_TEXTURE2D(_MaskMap5, sampler_Linear_Repeat, uvMask5);
-                float4 maskMap6 = SAMPLE_TEXTURE2D(_MaskMap6, sampler_Linear_Repeat, uvMask6);
-                float4 maskMap7 = SAMPLE_TEXTURE2D(_MaskMap7, sampler_Linear_Repeat, uvMask7);
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
 
                 float occlusion[8];
                 float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
@@ -707,11 +711,13 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
+                // Sample control textures
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float2 uvControlExtra = TRANSFORM_TEX(IN.uv, _ControlExtra);
-                float4 weights0 = SAMPLE_TEXTURE2D(_Control, sampler_Linear_Clamp, uvControl);
-                float4 weights1 = SAMPLE_TEXTURE2D(_ControlExtra, sampler_Linear_Clamp, uvControlExtra);
+                float4 weights0 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_ControlExtra, sampler_Linear_Clamp, uvControlExtra, _MipMapBias);
 
+                // UVs for textures
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
                 float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
                 float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
@@ -721,15 +727,17 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                float4 tex0 = SAMPLE_TEXTURE2D(_Splat0, sampler_Linear_Repeat, uv0);
-                float4 tex1 = SAMPLE_TEXTURE2D(_Splat1, sampler_Linear_Repeat, uv1);
-                float4 tex2 = SAMPLE_TEXTURE2D(_Splat2, sampler_Linear_Repeat, uv2);
-                float4 tex3 = SAMPLE_TEXTURE2D(_Splat3, sampler_Linear_Repeat, uv3);
-                float4 tex4 = SAMPLE_TEXTURE2D(_Splat4, sampler_Linear_Repeat, uv4);
-                float4 tex5 = SAMPLE_TEXTURE2D(_Splat5, sampler_Linear_Repeat, uv5);
-                float4 tex6 = SAMPLE_TEXTURE2D(_Splat6, sampler_Linear_Repeat, uv6);
-                float4 tex7 = SAMPLE_TEXTURE2D(_Splat7, sampler_Linear_Repeat, uv7);
+                // Sample albedo textures
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
 
+                // Blend albedo
                 float4 albedo = BlendTextures(weights0, weights1, tex0, tex1, tex2, tex3, tex4, tex5, tex6, tex7);
 
                 // Sample mask maps for occlusion
@@ -742,14 +750,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                float4 maskMap0 = SAMPLE_TEXTURE2D(_MaskMap0, sampler_Linear_Repeat, uvMask0);
-                float4 maskMap1 = SAMPLE_TEXTURE2D(_MaskMap1, sampler_Linear_Repeat, uvMask1);
-                float4 maskMap2 = SAMPLE_TEXTURE2D(_MaskMap2, sampler_Linear_Repeat, uvMask2);
-                float4 maskMap3 = SAMPLE_TEXTURE2D(_MaskMap3, sampler_Linear_Repeat, uvMask3);
-                float4 maskMap4 = SAMPLE_TEXTURE2D(_MaskMap4, sampler_Linear_Repeat, uvMask4);
-                float4 maskMap5 = SAMPLE_TEXTURE2D(_MaskMap5, sampler_Linear_Repeat, uvMask5);
-                float4 maskMap6 = SAMPLE_TEXTURE2D(_MaskMap6, sampler_Linear_Repeat, uvMask6);
-                float4 maskMap7 = SAMPLE_TEXTURE2D(_MaskMap7, sampler_Linear_Repeat, uvMask7);
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
 
                 float occlusion[8];
                 float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
@@ -794,7 +802,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
-                float3 tangentWS : TEXcoord2;
+                float3 tangentWS : TEXCOORD2;
                 float3 bitangentWS : TEXCOORD3;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
@@ -826,8 +834,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
 
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float2 uvControlExtra = TRANSFORM_TEX(IN.uv, _ControlExtra);
-                float4 weights0 = SAMPLE_TEXTURE2D(_Control, sampler_Linear_Clamp, uvControl);
-                float4 weights1 = SAMPLE_TEXTURE2D(_ControlExtra, sampler_Linear_Clamp, uvControlExtra);
+                float4 weights0 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_ControlExtra, sampler_Linear_Clamp, uvControlExtra, _MipMapBias);
 
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
                 float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
@@ -838,14 +846,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal0, sampler_Linear_Repeat, uv0), 1.0);
-                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal1, sampler_Linear_Repeat, uv1), 1.0);
-                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal2, sampler_Linear_Repeat, uv2), 1.0);
-                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal3, sampler_Linear_Repeat, uv3), 1.0);
-                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal4, sampler_Linear_Repeat, uv4), 1.0);
-                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal5, sampler_Linear_Repeat, uv5), 1.0);
-                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal6, sampler_Linear_Repeat, uv6), 1.0);
-                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal7, sampler_Linear_Repeat, uv7), 1.0);
+                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
+                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
+                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
+                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
+                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
+                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
+                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
+                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
 
                 #ifdef ENABLE_NORMAL_INTENSITY
                     normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
@@ -940,8 +948,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 // Sample control textures
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float2 uvControlExtra = TRANSFORM_TEX(IN.uv, _ControlExtra);
-                float4 weights0 = SAMPLE_TEXTURE2D(_Control, sampler_Linear_Clamp, uvControl);
-                float4 weights1 = SAMPLE_TEXTURE2D(_ControlExtra, sampler_Linear_Clamp, uvControlExtra);
+                float4 weights0 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_ControlExtra, sampler_Linear_Clamp, uvControlExtra, _MipMapBias);
 
                 // UVs for textures
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
@@ -962,28 +970,28 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
                 // Sample albedo textures
-                float4 tex0 = SAMPLE_TEXTURE2D(_Splat0, sampler_Linear_Repeat, uv0);
-                float4 tex1 = SAMPLE_TEXTURE2D(_Splat1, sampler_Linear_Repeat, uv1);
-                float4 tex2 = SAMPLE_TEXTURE2D(_Splat2, sampler_Linear_Repeat, uv2);
-                float4 tex3 = SAMPLE_TEXTURE2D(_Splat3, sampler_Linear_Repeat, uv3);
-                float4 tex4 = SAMPLE_TEXTURE2D(_Splat4, sampler_Linear_Repeat, uv4);
-                float4 tex5 = SAMPLE_TEXTURE2D(_Splat5, sampler_Linear_Repeat, uv5);
-                float4 tex6 = SAMPLE_TEXTURE2D(_Splat6, sampler_Linear_Repeat, uv6);
-                float4 tex7 = SAMPLE_TEXTURE2D(_Splat7, sampler_Linear_Repeat, uv7);
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
 
                 // Blend albedo
                 float4 albedo = BlendTextures(weights0, weights1, tex0, tex1, tex2, tex3, tex4, tex5, tex6, tex7);
                 float3 baseColor = albedo.rgb;
 
                 // Sample normal maps
-                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal0, sampler_Linear_Repeat, uv0), 1.0);
-                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal1, sampler_Linear_Repeat, uv1), 1.0);
-                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal2, sampler_Linear_Repeat, uv2), 1.0);
-                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal3, sampler_Linear_Repeat, uv3), 1.0);
-                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal4, sampler_Linear_Repeat, uv4), 1.0);
-                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal5, sampler_Linear_Repeat, uv5), 1.0);
-                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal6, sampler_Linear_Repeat, uv6), 1.0);
-                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D(_Normal7, sampler_Linear_Repeat, uv7), 1.0);
+                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
+                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
+                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
+                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
+                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
+                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
+                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
+                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
 
                 #ifdef ENABLE_NORMAL_INTENSITY
                     normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
@@ -1008,14 +1016,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 normalWS = NormalizeNormalPerPixel(normalWS);
 
                 // Sample mask maps
-                float4 maskMap0 = SAMPLE_TEXTURE2D(_MaskMap0, sampler_Linear_Repeat, uvMask0);
-                float4 maskMap1 = SAMPLE_TEXTURE2D(_MaskMap1, sampler_Linear_Repeat, uvMask1);
-                float4 maskMap2 = SAMPLE_TEXTURE2D(_MaskMap2, sampler_Linear_Repeat, uvMask2);
-                float4 maskMap3 = SAMPLE_TEXTURE2D(_MaskMap3, sampler_Linear_Repeat, uvMask3);
-                float4 maskMap4 = SAMPLE_TEXTURE2D(_MaskMap4, sampler_Linear_Repeat, uvMask4);
-                float4 maskMap5 = SAMPLE_TEXTURE2D(_MaskMap5, sampler_Linear_Repeat, uvMask5);
-                float4 maskMap6 = SAMPLE_TEXTURE2D(_MaskMap6, sampler_Linear_Repeat, uvMask6);
-                float4 maskMap7 = SAMPLE_TEXTURE2D(_MaskMap7, sampler_Linear_Repeat, uvMask7);
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
 
                 // Process mask maps
                 float metallic[8];

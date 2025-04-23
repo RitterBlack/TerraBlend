@@ -17,7 +17,7 @@ namespace CustomShaderGUI
         private List<MaterialProperty> remapRMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapGMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapAMinMax = new List<MaterialProperty>();
-        private MaterialProperty control, controlExtra, specularColor, enableNormalIntensity;
+        private MaterialProperty control, controlExtra, specularColor, enableNormalIntensity, mipMapBias;
         private bool[] maskMapFoldouts = new bool[8]; // Track foldout state for each layer (up to 8 layers)
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
@@ -85,6 +85,7 @@ namespace CustomShaderGUI
             controlExtra = FindProperty("_ControlExtra", properties);
             specularColor = FindProperty("_SpecularColor", properties);
             enableNormalIntensity = FindProperty("_EnableNormalIntensity", properties);
+            mipMapBias = FindProperty("_MipMapBias", properties);
         }
 
         private int GetActiveLayerCount(Material material)
@@ -397,6 +398,7 @@ namespace CustomShaderGUI
             EditorGUILayout.BeginVertical(GUI.skin.box);
             editor.ColorProperty(specularColor, "Specular Color");
             editor.ShaderProperty(enableNormalIntensity, "Enable Normal Intensity");
+            editor.ShaderProperty(mipMapBias, new GUIContent("MipMap Bias", "Adjusts the mipmap level used for texture sampling (negative for sharper, positive for blurrier)"));
             EditorGUILayout.EndVertical();
         }
 
