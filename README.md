@@ -9,9 +9,10 @@ A Unity URP shader for terrain blending, supporting up to 8 textures with two co
 - Customizable channel remapping
 - URP-compatible with Forward and GBuffer passes
 - User-friendly custom GUI
+- Button Hide/Show layer
 
 **Requirements:**
 - Unity 2021.3+ with Universal Render Pipeline (URP)
 
 **License:** MIT
-![Screenshot 2025-04-24 032516](https://github.com/user-attachments/assets/37e598a0-8393-4dad-86be-b7317ad9965b)
+![image](https://github.com/user-attachments/assets/6b32c9e7-8521-4ae7-9d28-b88957a99d9d)
