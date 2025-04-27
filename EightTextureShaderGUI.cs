@@ -17,8 +17,8 @@ namespace CustomShaderGUI
         private List<MaterialProperty> remapRMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapGMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapAMinMax = new List<MaterialProperty>();
-        private MaterialProperty control, controlExtra, specularColor, enableNormalIntensity, mipMapBias;
-        private bool[] maskMapFoldouts = new bool[8]; // Track foldout state for each layer (up to 8 layers)
+        private MaterialProperty control, control2, specularColor, enableNormalIntensity, mipMapBias, blendSmoothness;
+        private bool[] maskMapFoldouts = new bool[8]; // Підтримка 8 шарів
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -37,11 +37,11 @@ namespace CustomShaderGUI
             {
                 DrawLayerSection(materialEditor, material, i, activeLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
                     remapRMinMax[i], remapGMinMax[i], remapAMinMax[i]);
-                GUILayout.Space(5); // Reduced spacing (approximately half of default)
+                GUILayout.Space(5); // Збережено оригінальний відступ
             }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Control Maps", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Control Map", EditorStyles.boldLabel); // Відновлено оригінальну назву
             DrawControlSection(materialEditor);
 
             EditorGUILayout.Space();
@@ -82,10 +82,11 @@ namespace CustomShaderGUI
             }
 
             control = FindProperty("_Control", properties);
-            controlExtra = FindProperty("_ControlExtra", properties);
+            control2 = FindProperty("_Control2", properties);
             specularColor = FindProperty("_SpecularColor", properties);
             enableNormalIntensity = FindProperty("_EnableNormalIntensity", properties);
             mipMapBias = FindProperty("_MipMapBias", properties);
+            blendSmoothness = FindProperty("_BlendSmoothness", properties);
         }
 
         private int GetActiveLayerCount(Material material)
@@ -140,17 +141,17 @@ namespace CustomShaderGUI
                 }
             }
 
-            // Check _ControlExtra texture (controls layers 4-7: R, G, B, A)
-            if (controlExtra != null && controlExtra.textureValue != null)
+            // Check _Control2 texture (controls layers 4-7: R, G, B, A)
+            if (control2 != null && control2.textureValue != null)
             {
-                Texture2D controlExtraTex = controlExtra.textureValue as Texture2D;
-                if (controlExtraTex != null)
+                Texture2D controlTex2 = control2.textureValue as Texture2D;
+                if (controlTex2 != null)
                 {
                     // Make texture readable temporarily
-                    bool wasReadable = controlExtraTex.isReadable;
+                    bool wasReadable = controlTex2.isReadable;
                     if (!wasReadable)
                     {
-                        string path = AssetDatabase.GetAssetPath(controlExtraTex);
+                        string path = AssetDatabase.GetAssetPath(controlTex2);
                         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
                         if (importer != null)
                         {
@@ -159,7 +160,7 @@ namespace CustomShaderGUI
                         }
                     }
 
-                    Color[] pixels = controlExtraTex.GetPixels();
+                    Color[] pixels = controlTex2.GetPixels();
                     bool hasR = false, hasG = false, hasB = false, hasA = false;
                     foreach (Color pixel in pixels)
                     {
@@ -177,7 +178,7 @@ namespace CustomShaderGUI
                     // Restore original readability state
                     if (!wasReadable)
                     {
-                        string path = AssetDatabase.GetAssetPath(controlExtraTex);
+                        string path = AssetDatabase.GetAssetPath(controlTex2);
                         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
                         if (importer != null)
                         {
@@ -340,7 +341,7 @@ namespace CustomShaderGUI
 
             EditorGUILayout.BeginHorizontal(GUIStyle.none);
 
-            // Control texture
+            // Control texture (Layers 1-4)
             Rect controlRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newControl = (Texture)EditorGUI.ObjectField(new Rect(controlRect.x, controlRect.y, 70, 70), control.textureValue, typeof(Texture), false);
@@ -350,14 +351,14 @@ namespace CustomShaderGUI
                 control.textureValue = newControl;
             }
 
-            // Control extra texture
-            Rect controlExtraRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
+            // Control2 texture (Layers 5-8)
+            Rect control2Rect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
-            Texture newControlExtra = (Texture)EditorGUI.ObjectField(new Rect(controlExtraRect.x, controlExtraRect.y, 70, 70), controlExtra.textureValue, typeof(Texture), false);
+            Texture newControl2 = (Texture)EditorGUI.ObjectField(new Rect(control2Rect.x, control2Rect.y, 70, 70), control2.textureValue, typeof(Texture), false);
             if (EditorGUI.EndChangeCheck())
             {
-                editor.RegisterPropertyChangeUndo("Control Extra Texture");
-                controlExtra.textureValue = newControlExtra;
+                editor.RegisterPropertyChangeUndo("Control2 Texture");
+                control2.textureValue = newControl2;
             }
 
             EditorGUILayout.EndHorizontal();
@@ -365,6 +366,7 @@ namespace CustomShaderGUI
             GUILayout.FlexibleSpace();
 
             EditorGUILayout.BeginVertical();
+            // Use tiling/offset from _Control (assuming both controls share the same for simplicity)
             Vector4 controlTilingOffset = control.textureScaleAndOffset;
 
             EditorGUILayout.BeginHorizontal();
@@ -383,8 +385,9 @@ namespace CustomShaderGUI
             float offsetY = EditorGUILayout.FloatField(controlTilingOffset.w, GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
+            // Apply tiling and offset to both control textures
             control.textureScaleAndOffset = new Vector4(tilingX, tilingY, offsetX, offsetY);
-            controlExtra.textureScaleAndOffset = control.textureScaleAndOffset;
+            control2.textureScaleAndOffset = new Vector4(tilingX, tilingY, offsetX, offsetY);
 
             EditorGUILayout.EndVertical();
 
@@ -399,6 +402,7 @@ namespace CustomShaderGUI
             editor.ColorProperty(specularColor, "Specular Color");
             editor.ShaderProperty(enableNormalIntensity, "Enable Normal Intensity");
             editor.ShaderProperty(mipMapBias, new GUIContent("MipMap Bias", "Adjusts the mipmap level used for texture sampling (negative for sharper, positive for blurrier)"));
+            editor.ShaderProperty(blendSmoothness, new GUIContent("Control2 Edge Smoothness", "Controls the smoothness of blending between Control1 and Control2"));
             EditorGUILayout.EndVertical();
         }
 
