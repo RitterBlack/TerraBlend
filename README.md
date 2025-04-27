@@ -14,3 +14,4 @@ A Unity URP shader for terrain blending, supporting up to 8 textures with two co
 - Unity 2021.3+ with Universal Render Pipeline (URP)
 
 **License:** MIT
+![Screenshot 2025-04-24 032516](https://github.com/user-attachments/assets/37e598a0-8393-4dad-86be-b7317ad9965b)
