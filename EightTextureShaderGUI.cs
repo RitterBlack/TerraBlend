@@ -17,8 +17,9 @@ namespace CustomShaderGUI
         private List<MaterialProperty> remapRMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapGMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapAMinMax = new List<MaterialProperty>();
+        private List<MaterialProperty> layerVisibilities = new List<MaterialProperty>();
         private MaterialProperty control, control2, specularColor, enableNormalIntensity, mipMapBias, blendSmoothness;
-        private bool[] maskMapFoldouts = new bool[8]; // Підтримка 8 шарів
+        private bool[] maskMapFoldouts = new bool[8];
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -29,19 +30,24 @@ namespace CustomShaderGUI
 
             EditorGUI.BeginChangeCheck();
 
-            // Determine the number of active layers
-            int activeLayers = GetActiveLayerCount(material);
+            // Determine the number of active layers, used layers, and hidden layers
+            var (activeLayers, usedLayers, hiddenLayers) = GetActiveAndUsedLayerInfo(material);
 
-            EditorGUILayout.LabelField($"Layers (Active: {activeLayers})", EditorStyles.boldLabel);
-            for (int i = 0; i < activeLayers && i < splats.Count; i++)
+            // Display active and hidden layer counts
+            EditorGUILayout.LabelField($"Layers (Active: {activeLayers}, Hidden: {hiddenLayers})", EditorStyles.boldLabel);
+            for (int i = 0; i < splats.Count; i++)
             {
-                DrawLayerSection(materialEditor, material, i, activeLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
-                    remapRMinMax[i], remapGMinMax[i], remapAMinMax[i]);
-                GUILayout.Space(5); // Збережено оригінальний відступ
+                // Відображаємо лише шари, які використовуються (на основі Control або Control2)
+                if (usedLayers[i])
+                {
+                    DrawLayerSection(materialEditor, material, i, activeLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
+                        remapRMinMax[i], remapGMinMax[i], remapAMinMax[i]);
+                    GUILayout.Space(5);
+                }
             }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Control Map", EditorStyles.boldLabel); // Відновлено оригінальну назву
+            EditorGUILayout.LabelField("Control Map", EditorStyles.boldLabel);
             DrawControlSection(materialEditor);
 
             EditorGUILayout.Space();
@@ -64,6 +70,7 @@ namespace CustomShaderGUI
             remapRMinMax.Clear();
             remapGMinMax.Clear();
             remapAMinMax.Clear();
+            layerVisibilities.Clear();
 
             int layerIndex = 0;
             while (true)
@@ -78,6 +85,7 @@ namespace CustomShaderGUI
                 remapRMinMax.Add(FindProperty($"_RemapRMinMax{layerIndex}", properties, false));
                 remapGMinMax.Add(FindProperty($"_RemapGMinMax{layerIndex}", properties, false));
                 remapAMinMax.Add(FindProperty($"_RemapAMinMax{layerIndex}", properties, false));
+                layerVisibilities.Add(FindProperty($"_LayerVisibility{layerIndex}", properties, false));
                 layerIndex++;
             }
 
@@ -89,9 +97,11 @@ namespace CustomShaderGUI
             blendSmoothness = FindProperty("_BlendSmoothness", properties);
         }
 
-        private int GetActiveLayerCount(Material material)
+        private (int activeLayers, bool[] usedLayers, int hiddenLayers) GetActiveAndUsedLayerInfo(Material material)
         {
             int activeLayers = 0;
+            int hiddenLayers = 0;
+            bool[] usedLayers = new bool[splats.Count];
 
             // Check _Control texture (controls layers 0-3: R, G, B, A)
             if (control != null && control.textureValue != null)
@@ -99,7 +109,6 @@ namespace CustomShaderGUI
                 Texture2D controlTex = control.textureValue as Texture2D;
                 if (controlTex != null)
                 {
-                    // Make texture readable temporarily
                     bool wasReadable = controlTex.isReadable;
                     if (!wasReadable)
                     {
@@ -122,12 +131,40 @@ namespace CustomShaderGUI
                         if (pixel.a > 0.01f) hasA = true;
                     }
 
-                    if (hasR) activeLayers++;
-                    if (hasG) activeLayers++;
-                    if (hasB) activeLayers++;
-                    if (hasA) activeLayers++;
+                    // Позначимо використані шари, підрахуємо активні та приховані
+                    if (hasR)
+                    {
+                        usedLayers[0] = true;
+                        if (layerVisibilities[0].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasG)
+                    {
+                        usedLayers[1] = true;
+                        if (layerVisibilities[1].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasB)
+                    {
+                        usedLayers[2] = true;
+                        if (layerVisibilities[2].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasA)
+                    {
+                        usedLayers[3] = true;
+                        if (layerVisibilities[3].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
 
-                    // Restore original readability state
                     if (!wasReadable)
                     {
                         string path = AssetDatabase.GetAssetPath(controlTex);
@@ -147,7 +184,6 @@ namespace CustomShaderGUI
                 Texture2D controlTex2 = control2.textureValue as Texture2D;
                 if (controlTex2 != null)
                 {
-                    // Make texture readable temporarily
                     bool wasReadable = controlTex2.isReadable;
                     if (!wasReadable)
                     {
@@ -170,12 +206,40 @@ namespace CustomShaderGUI
                         if (pixel.a > 0.01f) hasA = true;
                     }
 
-                    if (hasR) activeLayers++;
-                    if (hasG) activeLayers++;
-                    if (hasB) activeLayers++;
-                    if (hasA) activeLayers++;
+                    // Позначимо використані шари, підрахуємо активні та приховані
+                    if (hasR)
+                    {
+                        usedLayers[4] = true;
+                        if (layerVisibilities[4].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasG)
+                    {
+                        usedLayers[5] = true;
+                        if (layerVisibilities[5].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasB)
+                    {
+                        usedLayers[6] = true;
+                        if (layerVisibilities[6].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
+                    if (hasA)
+                    {
+                        usedLayers[7] = true;
+                        if (layerVisibilities[7].floatValue > 0)
+                            activeLayers++;
+                        else
+                            hiddenLayers++;
+                    }
 
-                    // Restore original readability state
                     if (!wasReadable)
                     {
                         string path = AssetDatabase.GetAssetPath(controlTex2);
@@ -190,7 +254,8 @@ namespace CustomShaderGUI
             }
 
             // Clamp to the number of available splat textures
-            return Mathf.Min(activeLayers, splats.Count);
+            activeLayers = Mathf.Min(activeLayers, splats.Count);
+            return (activeLayers, usedLayers, hiddenLayers);
         }
 
         private void DrawLayerSection(MaterialEditor editor, Material material, int layerIndex, int activeLayers, string displayName,
@@ -203,7 +268,7 @@ namespace CustomShaderGUI
 
             EditorGUILayout.BeginHorizontal();
 
-            // Draw Up/Down buttons inside the box, top-left
+            // Draw Up/Down and Hide/Show buttons inside the box, top-left
             EditorGUILayout.BeginVertical(GUILayout.Width(30));
             GUI.enabled = layerIndex > 0;
             if (GUILayout.Button("↑", GUILayout.Width(30), GUILayout.Height(20)))
@@ -216,12 +281,22 @@ namespace CustomShaderGUI
                 SwapLayerProperties(material, layerIndex, layerIndex + 1);
             }
             GUI.enabled = true;
+            // Add Hide/Show button
+            bool isVisible = layerVisibilities[layerIndex].floatValue > 0;
+            if (GUILayout.Button(isVisible ? "H" : "V", GUILayout.Width(30), GUILayout.Height(20)))
+            {
+                Undo.RecordObject(material, $"Toggle {displayName} Visibility");
+                layerVisibilities[layerIndex].floatValue = isVisible ? 0 : 1;
+                EditorUtility.SetDirty(material);
+            }
             EditorGUILayout.EndVertical();
 
             // Draw the layer content
             EditorGUILayout.BeginVertical();
 
-            EditorGUILayout.LabelField(displayName, EditorStyles.boldLabel);
+            // Позначення статусу шару (Visible або Hidden)
+            string statusLabel = isVisible ? "(Visible)" : "(Hidden)";
+            EditorGUILayout.LabelField($"{displayName} {statusLabel}", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
 
@@ -366,7 +441,6 @@ namespace CustomShaderGUI
             GUILayout.FlexibleSpace();
 
             EditorGUILayout.BeginVertical();
-            // Use tiling/offset from _Control (assuming both controls share the same for simplicity)
             Vector4 controlTilingOffset = control.textureScaleAndOffset;
 
             EditorGUILayout.BeginHorizontal();
@@ -444,6 +518,11 @@ namespace CustomShaderGUI
             tempFloat = smoothness[indexA].floatValue;
             smoothness[indexA].floatValue = smoothness[indexB].floatValue;
             smoothness[indexB].floatValue = tempFloat;
+
+            // Swap visibility
+            tempFloat = layerVisibilities[indexA].floatValue;
+            layerVisibilities[indexA].floatValue = layerVisibilities[indexB].floatValue;
+            layerVisibilities[indexB].floatValue = tempFloat;
 
             // Swap vector values
             Vector4 tempVector = remapRMinMax[indexA].vectorValue;
