@@ -40,7 +40,7 @@ namespace CustomShaderGUI
                 // Відображаємо лише шари, які використовуються (на основі Control або Control2)
                 if (usedLayers[i])
                 {
-                    DrawLayerSection(materialEditor, material, i, activeLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
+                    DrawLayerSection(materialEditor, material, i, usedLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
                         remapRMinMax[i], remapGMinMax[i], remapAMinMax[i]);
                     GUILayout.Space(5);
                 }
@@ -131,7 +131,6 @@ namespace CustomShaderGUI
                         if (pixel.a > 0.01f) hasA = true;
                     }
 
-                    // Позначимо використані шари, підрахуємо активні та приховані
                     if (hasR)
                     {
                         usedLayers[0] = true;
@@ -206,7 +205,6 @@ namespace CustomShaderGUI
                         if (pixel.a > 0.01f) hasA = true;
                     }
 
-                    // Позначимо використані шари, підрахуємо активні та приховані
                     if (hasR)
                     {
                         usedLayers[4] = true;
@@ -258,7 +256,7 @@ namespace CustomShaderGUI
             return (activeLayers, usedLayers, hiddenLayers);
         }
 
-        private void DrawLayerSection(MaterialEditor editor, Material material, int layerIndex, int activeLayers, string displayName,
+        private void DrawLayerSection(MaterialEditor editor, Material material, int layerIndex, bool[] usedLayers, string displayName,
             MaterialProperty textureProp, MaterialProperty normalProp,
             MaterialProperty intensityProp, MaterialProperty smoothnessProp,
             MaterialProperty maskMapProp, MaterialProperty remapRMinMaxProp,
@@ -270,18 +268,29 @@ namespace CustomShaderGUI
 
             // Draw Up/Down and Hide/Show buttons inside the box, top-left
             EditorGUILayout.BeginVertical(GUILayout.Width(30));
+            bool originalGUIEnabled = GUI.enabled; // Зберігаємо поточний стан GUI.enabled
+            // Кнопка "Up" активна, якщо шар не перший
             GUI.enabled = layerIndex > 0;
             if (GUILayout.Button("↑", GUILayout.Width(30), GUILayout.Height(20)))
             {
                 SwapLayerProperties(material, layerIndex, layerIndex - 1);
             }
-            GUI.enabled = layerIndex < activeLayers - 1;
+            // Кнопка "Down" активна, якщо є наступний використаний шар
+            GUI.enabled = false;
+            for (int i = layerIndex + 1; i < usedLayers.Length; i++)
+            {
+                if (usedLayers[i])
+                {
+                    GUI.enabled = true;
+                    break;
+                }
+            }
             if (GUILayout.Button("↓", GUILayout.Width(30), GUILayout.Height(20)))
             {
                 SwapLayerProperties(material, layerIndex, layerIndex + 1);
             }
+            // Кнопка "Hide/Show" завжди активна
             GUI.enabled = true;
-            // Add Hide/Show button
             bool isVisible = layerVisibilities[layerIndex].floatValue > 0;
             if (GUILayout.Button(isVisible ? "H" : "V", GUILayout.Width(30), GUILayout.Height(20)))
             {
@@ -289,6 +298,7 @@ namespace CustomShaderGUI
                 layerVisibilities[layerIndex].floatValue = isVisible ? 0 : 1;
                 EditorUtility.SetDirty(material);
             }
+            GUI.enabled = originalGUIEnabled; // Відновлюємо стан GUI.enabled
             EditorGUILayout.EndVertical();
 
             // Draw the layer content
@@ -297,6 +307,9 @@ namespace CustomShaderGUI
             // Позначення статусу шару (Visible або Hidden)
             string statusLabel = isVisible ? "(Visible)" : "(Hidden)";
             EditorGUILayout.LabelField($"{displayName} {statusLabel}", EditorStyles.boldLabel);
+
+            // Вимикаємо інтерактивність для полів текстур і налаштувань, якщо шар прихований
+            GUI.enabled = isVisible && originalGUIEnabled;
 
             EditorGUILayout.BeginHorizontal();
 
@@ -388,6 +401,9 @@ namespace CustomShaderGUI
                     DrawMinMaxSlider(editor, remapAMinMaxProp, "Smoothness Range");
                 }
             }
+
+            // Відновлюємо GUI.enabled після всіх полів
+            GUI.enabled = originalGUIEnabled;
 
             EditorGUILayout.EndVertical();
 
