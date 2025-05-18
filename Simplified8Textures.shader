@@ -78,6 +78,16 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _RemapAMinMax6("Smoothness Range 7", Vector) = (0, 1, 0, 0)
         _RemapAMinMax7("Smoothness Range 8", Vector) = (0, 1, 0, 0)
 
+        // Color tints for each layer
+        _ColorTint0("Color Tint 1", Color) = (1,1,1,1)
+        _ColorTint1("Color Tint 2", Color) = (1,1,1,1)
+        _ColorTint2("Color Tint 3", Color) = (1,1,1,1)
+        _ColorTint3("Color Tint 4", Color) = (1,1,1,1)
+        _ColorTint4("Color Tint 5", Color) = (1,1,1,1)
+        _ColorTint5("Color Tint 6", Color) = (1,1,1,1)
+        _ColorTint6("Color Tint 7", Color) = (1,1,1,1)
+        _ColorTint7("Color Tint 8", Color) = (1,1,1,1)
+
         // Control textures for blending
         _Control("Control 1 (Layers 1-4)", 2D) = "white" {}
         _Control2("Control 2 (Layers 5-8)", 2D) = "black" {}
@@ -138,6 +148,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityGBuffer.hlsl"
 
         // Shader features
         #pragma shader_feature_local ENABLE_NORMAL_INTENSITY
@@ -183,6 +195,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float4 _MaskMap6_ST;
             float4 _MaskMap7_ST;
             float4 _SpecularColor;
+            float4 _ColorTint0, _ColorTint1, _ColorTint2, _ColorTint3;
+            float4 _ColorTint4, _ColorTint5, _ColorTint6, _ColorTint7;
             float _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3;
             float _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7;
             float _NormalIntensity0, _NormalIntensity1, _NormalIntensity2, _NormalIntensity3;
@@ -361,15 +375,15 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                // Sample albedo textures with MipMap Bias
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
+                // Sample albedo textures with MipMap Bias and apply color tints
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
                 // Compute contributions from each control map
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
@@ -674,15 +688,15 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                // Sample albedo textures with MipMap Bias
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
+                // Sample albedo textures with MipMap Bias and apply color tints
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
                 // Compute contributions
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
@@ -818,15 +832,15 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                // Sample albedo textures with MipMap Bias
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
+                // Sample albedo textures with MipMap Bias and apply color tints
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
                 // Compute contributions
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
@@ -1116,15 +1130,15 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                // Sample albedo textures with MipMap Bias
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias);
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias);
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias);
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias);
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias);
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias);
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias);
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias);
+                // Sample albedo textures with MipMap Bias and apply color tints
+                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
+                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
+                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
+                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
+                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
+                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
+                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
+                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
                 // Compute contributions
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
@@ -1154,11 +1168,10 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
 
                 // Blend normals using smooth blending factor
                 float4 blendedNormal1 = weights1.r * float4(normal0, 0) + weights1.g * float4(normal1, 0) +
-                                        weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
-                float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.g * float4(normal5, 0) +
-                                        weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
+                weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
+                float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
                 float3 normalTS = lerp(blendedNormal1.xyz, blendedNormal2.xyz, blendFactor);
-                normalTS = normalize(normalTS);
+                normalTS = normalize(normalTS); // Normalize to prevent artifacts
 
                 // Transform normal to world space
                 float3x3 tangentToWorld = float3x3(IN.tangentWS, IN.bitangentWS, IN.normalWS);
@@ -1181,85 +1194,93 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float smoothness[8];
                 float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
                 float4 remapRMinMax[8] = { _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3,
-                                        _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7 };
+                                           _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7 };
                 float4 remapGMinMax[8] = { _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3,
-                                        _RemapGMinMax4, _RemapGMinMax5, _RemapGMinMax6, _RemapGMinMax7 };
+                                           _RemapGMinMax4, _RemapGMinMax5, _RemapGMinMax6, _RemapGMinMax7 };
                 float4 remapAMinMax[8] = { _RemapAMinMax0, _RemapAMinMax1, _RemapAMinMax2, _RemapAMinMax3,
-                    _RemapAMinMax4, _RemapAMinMax5, _RemapAMinMax6, _RemapAMinMax7 };
-                    float defaultSmoothness[8] = { _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3,
-                                                   _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7 };
-    
-                    for (int i = 0; i < 8; i++)
+                                           _RemapAMinMax4, _RemapAMinMax5, _RemapAMinMax6, _RemapAMinMax7 };
+                float defaultSmoothness[8] = { _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3,
+                                               _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7 };
+
+                for (int i = 0; i < 8; i++)
+                {
+                    bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
+                    if (hasMaskMap)
                     {
-                        bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
-                        if (hasMaskMap)
-                        {
-                            metallic[i] = Remap(maskMaps[i].r, 0.0, 1.0, remapRMinMax[i].x, remapRMinMax[i].y);
-                            occlusion[i] = Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y);
-                            smoothness[i] = Remap(maskMaps[i].a, 0.0, 1.0, remapAMinMax[i].x, remapAMinMax[i].y);
-                        }
-                        else
-                        {
-                            metallic[i] = 0.0;
-                            occlusion[i] = 1.0;
-                            smoothness[i] = defaultSmoothness[i];
-                        }
+                        metallic[i] = Remap(maskMaps[i].r, 0.0, 1.0, remapRMinMax[i].x, remapRMinMax[i].y);
+                        occlusion[i] = Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y);
+                        smoothness[i] = Remap(maskMaps[i].a, 0.0, 1.0, remapAMinMax[i].x, remapAMinMax[i].y);
                     }
-    
-                    // Blend PBR parameters using smooth blending factor
-                    float finalMetallic = 0.0;
-                    float finalOcclusion = 1.0;
-                    float finalSmoothness = 0.0;
-                    float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
-                                              weights2.r, weights2.g, weights2.b, weights2.a };
-                    for (int i = 0; i < 4; i++)
+                    else
                     {
-                        finalMetallic += metallic[i] * weights1[i] * (1.0 - blendFactor);
-                        finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
-                        finalSmoothness += smoothness[i] * weights1[i] * (1.0 - blendFactor);
+                        metallic[i] = 0.0;
+                        occlusion[i] = 1.0;
+                        smoothness[i] = defaultSmoothness[i];
                     }
-                    for (int i = 4; i < 8; i++)
-                    {
-                        finalMetallic += metallic[i] * weights2[i - 4] * blendFactor;
-                        finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
-                        finalSmoothness += smoothness[i] * weights2[i - 4] * blendFactor;
-                    }
-    
-                    // Apply occlusion to albedo
-                    baseColor *= finalOcclusion;
-    
-                    // Set up surface data
-                    SurfaceData surfaceData = (SurfaceData)0;
-                    surfaceData.albedo = baseColor;
-                    surfaceData.specular = _SpecularColor.rgb;
-                    surfaceData.metallic = finalMetallic;
-                    surfaceData.smoothness = finalSmoothness;
-                    surfaceData.occlusion = 1.0; // Occlusion already applied to albedo
-                    surfaceData.emission = 0;
-                    surfaceData.alpha = 1;
-                    surfaceData.normalTS = normalTS;
-    
-                    // Compute shadowCoord for all shadow modes
-                    #if defined(_MAIN_LIGHT_SHADOWS_SCREEN) && !defined(_SURFACE_TYPE_TRANSPARENT)
-                        float4 shadowCoord = ComputeScreenPos(IN.positionCS);
-                    #elif defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-                        float4 shadowCoord = IN.shadowCoord;
-                    #else
-                        float4 shadowCoord = TransformWorldToShadowCoord(IN.positionWS);
-                    #endif
-    
-                    // Output GBuffer
-                    outGBuffer0 = half4(surfaceData.albedo, surfaceData.occlusion);
-                    outGBuffer1 = half4(surfaceData.specular, surfaceData.smoothness);
-                    outGBuffer2 = half4(normalWS, surfaceData.metallic);
-                    outGBuffer3 = half4(surfaceData.emission, 0);
-    
-                    outDepth = IN.positionCS.z;
                 }
-                ENDHLSL
+
+                // Blend PBR parameters using smooth blending factor
+                float finalMetallic = 0.0;
+                float finalOcclusion = 1.0;
+                float finalSmoothness = 0.0;
+                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
+                                          weights2.r, weights2.g, weights2.b, weights2.a };
+                for (int i = 0; i < 4; i++)
+                {
+                    finalMetallic += metallic[i] * weights1[i] * (1.0 - blendFactor);
+                    finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
+                    finalSmoothness += smoothness[i] * weights1[i] * (1.0 - blendFactor);
+                }
+                for (int i = 4; i < 8; i++)
+                {
+                    finalMetallic += metallic[i] * weights2[i - 4] * blendFactor;
+                    finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
+                    finalSmoothness += smoothness[i] * weights2[i - 4] * blendFactor;
+                }
+
+                // Apply occlusion to albedo
+                baseColor *= finalOcclusion;
+
+                // Set up surface data for GBuffer
+                SurfaceData surfaceData = (SurfaceData)0;
+                surfaceData.albedo = baseColor;
+                surfaceData.specular = _SpecularColor.rgb;
+                surfaceData.metallic = finalMetallic;
+                surfaceData.smoothness = finalSmoothness;
+                surfaceData.occlusion = 1.0; // Occlusion already applied to albedo
+                surfaceData.emission = 0;
+                surfaceData.alpha = 1;
+                surfaceData.normalTS = normalTS;
+
+                InputData inputData = (InputData)0;
+                inputData.positionWS = IN.positionWS;
+                inputData.normalWS = normalWS;
+                inputData.shadowCoord = IN.shadowCoord;
+                inputData.bakedGI = SAMPLE_GI(IN.lightmapUV, IN.normalWS, IN.normalWS);
+                inputData.shadowMask = SAMPLE_SHADOWMASK(IN.lightmapUV);
+
+                // Output to GBuffer
+                BRDFData brdfData;
+                InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
+
+                half3 diffuse = brdfData.diffuse;
+                half3 specular = brdfData.specular;
+                half perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(surfaceData.smoothness);
+                half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
+
+                // GBuffer outputs
+                outGBuffer0 = half4(diffuse, surfaceData.occlusion);
+                outGBuffer1 = half4(specular, roughness);
+                outGBuffer2 = half4(normalWS * 0.5 + 0.5, surfaceData.alpha);
+                outGBuffer3 = half4(surfaceData.emission, 0);
+
+                // Depth output
+                outDepth = IN.positionCS.z;
             }
+            ENDHLSL
         }
-    
-        CustomEditor "CustomShaderGUI.EightTextureShaderGUI"
-        Fallback "Hidden/InternalErrorShader"
     }
+
+    CustomEditor "CustomShaderGUI.EightTextureShaderGUI"
+    Fallback "Hidden/Universal Render Pipeline/FallbackError"
+}

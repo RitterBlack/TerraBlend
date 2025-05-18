@@ -18,6 +18,7 @@ namespace CustomShaderGUI
         private List<MaterialProperty> remapGMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapAMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> layerVisibilities = new List<MaterialProperty>();
+        private List<MaterialProperty> colorTints = new List<MaterialProperty>(); // New list for color tints
         private MaterialProperty control, control2, specularColor, enableNormalIntensity, mipMapBias, blendSmoothness;
         private bool[] maskMapFoldouts = new bool[8];
 
@@ -37,11 +38,11 @@ namespace CustomShaderGUI
             EditorGUILayout.LabelField($"Layers (Active: {activeLayers}, Hidden: {hiddenLayers})", EditorStyles.boldLabel);
             for (int i = 0; i < splats.Count; i++)
             {
-                // Відображаємо лише шари, які використовуються (на основі Control або Control2)
+                // Display only layers that are used (based on Control or Control2)
                 if (usedLayers[i])
                 {
                     DrawLayerSection(materialEditor, material, i, usedLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
-                        remapRMinMax[i], remapGMinMax[i], remapAMinMax[i]);
+                        remapRMinMax[i], remapGMinMax[i], remapAMinMax[i], colorTints[i]);
                     GUILayout.Space(5);
                 }
             }
@@ -71,6 +72,7 @@ namespace CustomShaderGUI
             remapGMinMax.Clear();
             remapAMinMax.Clear();
             layerVisibilities.Clear();
+            colorTints.Clear(); // Clear color tints list
 
             int layerIndex = 0;
             while (true)
@@ -86,6 +88,7 @@ namespace CustomShaderGUI
                 remapGMinMax.Add(FindProperty($"_RemapGMinMax{layerIndex}", properties, false));
                 remapAMinMax.Add(FindProperty($"_RemapAMinMax{layerIndex}", properties, false));
                 layerVisibilities.Add(FindProperty($"_LayerVisibility{layerIndex}", properties, false));
+                colorTints.Add(FindProperty($"_ColorTint{layerIndex}", properties, false)); // Add color tint property
                 layerIndex++;
             }
 
@@ -260,7 +263,8 @@ namespace CustomShaderGUI
             MaterialProperty textureProp, MaterialProperty normalProp,
             MaterialProperty intensityProp, MaterialProperty smoothnessProp,
             MaterialProperty maskMapProp, MaterialProperty remapRMinMaxProp,
-            MaterialProperty remapGMinMaxProp, MaterialProperty remapAMinMaxProp)
+            MaterialProperty remapGMinMaxProp, MaterialProperty remapAMinMaxProp,
+            MaterialProperty colorTintProp) // Added colorTintProp parameter
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
 
@@ -268,14 +272,14 @@ namespace CustomShaderGUI
 
             // Draw Up/Down and Hide/Show buttons inside the box, top-left
             EditorGUILayout.BeginVertical(GUILayout.Width(30));
-            bool originalGUIEnabled = GUI.enabled; // Зберігаємо поточний стан GUI.enabled
-            // Кнопка "Up" активна, якщо шар не перший
+            bool originalGUIEnabled = GUI.enabled;
+            // Up button active if layer is not first
             GUI.enabled = layerIndex > 0;
             if (GUILayout.Button("↑", GUILayout.Width(30), GUILayout.Height(20)))
             {
                 SwapLayerProperties(material, layerIndex, layerIndex - 1);
             }
-            // Кнопка "Down" активна, якщо є наступний використаний шар
+            // Down button active if there is a used layer below
             GUI.enabled = false;
             for (int i = layerIndex + 1; i < usedLayers.Length; i++)
             {
@@ -289,7 +293,7 @@ namespace CustomShaderGUI
             {
                 SwapLayerProperties(material, layerIndex, layerIndex + 1);
             }
-            // Кнопка "Hide/Show" завжди активна
+            // Hide/Show button always active
             GUI.enabled = true;
             bool isVisible = layerVisibilities[layerIndex].floatValue > 0;
             if (GUILayout.Button(isVisible ? "H" : "V", GUILayout.Width(30), GUILayout.Height(20)))
@@ -298,17 +302,17 @@ namespace CustomShaderGUI
                 layerVisibilities[layerIndex].floatValue = isVisible ? 0 : 1;
                 EditorUtility.SetDirty(material);
             }
-            GUI.enabled = originalGUIEnabled; // Відновлюємо стан GUI.enabled
+            GUI.enabled = originalGUIEnabled;
             EditorGUILayout.EndVertical();
 
             // Draw the layer content
             EditorGUILayout.BeginVertical();
 
-            // Позначення статусу шару (Visible або Hidden)
+            // Indicate layer status (Visible or Hidden)
             string statusLabel = isVisible ? "(Visible)" : "(Hidden)";
             EditorGUILayout.LabelField($"{displayName} {statusLabel}", EditorStyles.boldLabel);
 
-            // Вимикаємо інтерактивність для полів текстур і налаштувань, якщо шар прихований
+            // Disable interaction for texture and settings fields if layer is hidden
             GUI.enabled = isVisible && originalGUIEnabled;
 
             EditorGUILayout.BeginHorizontal();
@@ -386,6 +390,12 @@ namespace CustomShaderGUI
                 editor.RangeProperty(intensityProp, "Normal Intensity");
             }
 
+            // Show Color Tint field
+            if (colorTintProp != null)
+            {
+                editor.ColorProperty(colorTintProp, "Color Tint");
+            }
+
             // Show smoothness slider if no mask map, otherwise show remapping sliders with foldout
             if (maskMapProp == null || maskMapProp.textureValue == null)
             {
@@ -402,7 +412,7 @@ namespace CustomShaderGUI
                 }
             }
 
-            // Відновлюємо GUI.enabled після всіх полів
+            // Restore GUI.enabled after all fields
             GUI.enabled = originalGUIEnabled;
 
             EditorGUILayout.EndVertical();
@@ -539,6 +549,14 @@ namespace CustomShaderGUI
             tempFloat = layerVisibilities[indexA].floatValue;
             layerVisibilities[indexA].floatValue = layerVisibilities[indexB].floatValue;
             layerVisibilities[indexB].floatValue = tempFloat;
+
+            // Swap color tint
+            if (colorTints[indexA] != null && colorTints[indexB] != null)
+            {
+                Color tempColor = colorTints[indexA].colorValue;
+                colorTints[indexA].colorValue = colorTints[indexB].colorValue;
+                colorTints[indexB].colorValue = tempColor;
+            }
 
             // Swap vector values
             Vector4 tempVector = remapRMinMax[indexA].vectorValue;
