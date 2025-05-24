@@ -2,7 +2,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
 {
     Properties
     {
-        // Texture properties for the eight layers
         _Splat0("Layer 1", 2D) = "white" {}
         _Splat1("Layer 2", 2D) = "white" {}
         _Splat2("Layer 3", 2D) = "white" {}
@@ -12,7 +11,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _Splat6("Layer 7", 2D) = "white" {}
         _Splat7("Layer 8", 2D) = "white" {}
 
-        // Normal maps for the eight layers
         _Normal0("Normalmap 1", 2D) = "bump" {}
         _Normal1("Normalmap 2", 2D) = "bump" {}
         _Normal2("Normalmap 3", 2D) = "bump" {}
@@ -22,7 +20,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _Normal6("Normalmap 7", 2D) = "bump" {}
         _Normal7("Normalmap 8", 2D) = "bump" {}
 
-        // Mask maps for the eight layers
         _MaskMap0("Mask Map 1", 2D) = "white" {}
         _MaskMap1("Mask Map 2", 2D) = "white" {}
         _MaskMap2("Mask Map 3", 2D) = "white" {}
@@ -32,7 +29,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _MaskMap6("Mask Map 7", 2D) = "white" {}
         _MaskMap7("Mask Map 8", 2D) = "white" {}
 
-        // Smoothness values for each layer
         _Smoothness0("Smoothness 1", Range(0, 1)) = 0.5
         _Smoothness1("Smoothness 2", Range(0, 1)) = 0.5
         _Smoothness2("Smoothness 3", Range(0, 1)) = 0.5
@@ -42,7 +38,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _Smoothness6("Smoothness 7", Range(0, 1)) = 0.5
         _Smoothness7("Smoothness 8", Range(0, 1)) = 0.5
 
-        // Normal intensity for each layer
         _NormalIntensity0("Normal Intensity 1", Range(0.01, 10)) = 1
         _NormalIntensity1("Normal Intensity 2", Range(0.01, 10)) = 1
         _NormalIntensity2("Normal Intensity 3", Range(0.01, 10)) = 1
@@ -52,7 +47,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _NormalIntensity6("Normal Intensity 7", Range(0.01, 10)) = 1
         _NormalIntensity7("Normal Intensity 8", Range(0.01, 10)) = 1
 
-        // Remap ranges for mask map channels
         _RemapRMinMax0("Metallic Range 1", Vector) = (0, 1, 0, 0)
         _RemapRMinMax1("Metallic Range 2", Vector) = (0, 1, 0, 0)
         _RemapRMinMax2("Metallic Range 3", Vector) = (0, 1, 0, 0)
@@ -78,7 +72,57 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _RemapAMinMax6("Smoothness Range 7", Vector) = (0, 1, 0, 0)
         _RemapAMinMax7("Smoothness Range 8", Vector) = (0, 1, 0, 0)
 
-        // Color tints for each layer
+        [Toggle] _HeightBlendEnable0("Height Blend Enable 1", Float) = 0
+        [Toggle] _HeightBlendEnable1("Height Blend Enable 2", Float) = 0
+        [Toggle] _HeightBlendEnable2("Height Blend Enable 3", Float) = 0
+        [Toggle] _HeightBlendEnable3("Height Blend Enable 4", Float) = 0
+        [Toggle] _HeightBlendEnable4("Height Blend Enable 5", Float) = 0
+        [Toggle] _HeightBlendEnable5("Height Blend Enable 6", Float) = 0
+        [Toggle] _HeightBlendEnable6("Height Blend Enable 7", Float) = 0
+        [Toggle] _HeightBlendEnable7("Height Blend Enable 8", Float) = 0
+        _HeightParametrization0("Height Parametrization 1", Float) = 0
+        _HeightParametrization1("Height Parametrization 2", Float) = 0
+        _HeightParametrization2("Height Parametrization 3", Float) = 0
+        _HeightParametrization3("Height Parametrization 4", Float) = 0
+        _HeightParametrization4("Height Parametrization 5", Float) = 0
+        _HeightParametrization5("Height Parametrization 6", Float) = 0
+        _HeightParametrization6("Height Parametrization 7", Float) = 0
+        _HeightParametrization7("Height Parametrization 8", Float) = 0
+        _HeightAmplitude0("Height Amplitude 1 (cm)", Float) = 1
+        _HeightAmplitude1("Height Amplitude 2 (cm)", Float) = 1
+        _HeightAmplitude2("Height Amplitude 3 (cm)", Float) = 1
+        _HeightAmplitude3("Height Amplitude 4 (cm)", Float) = 1
+        _HeightAmplitude4("Height Amplitude 5 (cm)", Float) = 1
+        _HeightAmplitude5("Height Amplitude 6 (cm)", Float) = 1
+        _HeightAmplitude6("Height Amplitude 7 (cm)", Float) = 1
+        _HeightAmplitude7("Height Amplitude 8 (cm)", Float) = 1
+        _HeightBase0("Height Base 1 (cm)", Float) = 0
+        _HeightBase1("Height Base 2 (cm)", Float) = 0
+        _HeightBase2("Height Base 3 (cm)", Float) = 0
+        _HeightBase3("Height Base 4 (cm)", Float) = 0
+        _HeightBase4("Height Base 5 (cm)", Float) = 0
+        _HeightBase5("Height Base 6 (cm)", Float) = 0
+        _HeightBase6("Height Base 7 (cm)", Float) = 0
+        _HeightBase7("Height Base 8 (cm)", Float) = 0
+        _HeightMin0("Height Min 1 (cm)", Float) = 0
+        _HeightMin1("Height Min 2 (cm)", Float) = 0
+        _HeightMin2("Height Min 3 (cm)", Float) = 0
+        _HeightMin3("Height Min 4 (cm)", Float) = 0
+        _HeightMin4("Height Min 5 (cm)", Float) = 0
+        _HeightMin5("Height Min 6 (cm)", Float) = 0
+        _HeightMin6("Height Min 7 (cm)", Float) = 0
+        _HeightMin7("Height Min 8 (cm)", Float) = 0
+        _HeightMax0("Height Max 1 (cm)", Float) = 1
+        _HeightMax1("Height Max 2 (cm)", Float) = 1
+        _HeightMax2("Height Max 3 (cm)", Float) = 1
+        _HeightMax3("Height Max 4 (cm)", Float) = 1
+        _HeightMax4("Height Max 5 (cm)", Float) = 1
+        _HeightMax5("Height Max 6 (cm)", Float) = 1
+        _HeightMax6("Height Max 7 (cm)", Float) = 1
+        _HeightMax7("Height Max 8 (cm)", Float) = 1
+
+        _HeightTransparencyThreshold("Height Transparency Threshold", Range(0, 1)) = 0.5
+
         _ColorTint0("Color Tint 1", Color) = (1,1,1,1)
         _ColorTint1("Color Tint 2", Color) = (1,1,1,1)
         _ColorTint2("Color Tint 3", Color) = (1,1,1,1)
@@ -88,20 +132,16 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _ColorTint6("Color Tint 7", Color) = (1,1,1,1)
         _ColorTint7("Color Tint 8", Color) = (1,1,1,1)
 
-        // Control textures for blending
         _Control("Control 1 (Layers 1-4)", 2D) = "white" {}
         _Control2("Control 2 (Layers 5-8)", 2D) = "black" {}
 
-        // Specular color
         _SpecularColor("Specular Color", Color) = (0,0,0,0)
+        _SpecularStrength("Specular Strength", Range(0, 1)) = 0.5
 
-        // Mipmap bias control
         _MipMapBias("MipMap Bias", Range(-2, 2)) = 0
 
-        // Smoothness for blending edges between Control1 and Control2
         _BlendSmoothness("Control2 Edge Smoothness", Range(0.01, 0.5)) = 0.1
 
-        // Layer visibility toggles
         [Toggle] _LayerVisibility0("Layer 1 Visibility", Float) = 1
         [Toggle] _LayerVisibility1("Layer 2 Visibility", Float) = 1
         [Toggle] _LayerVisibility2("Layer 3 Visibility", Float) = 1
@@ -111,10 +151,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         [Toggle] _LayerVisibility6("Layer 7 Visibility", Float) = 1
         [Toggle] _LayerVisibility7("Layer 8 Visibility", Float) = 1
 
-        // Toggles for additional features
         [Toggle(ENABLE_NORMAL_INTENSITY)] _EnableNormalIntensity("Normal Intensity", Float) = 1
 
-        // Hidden properties for URP compatibility
         [HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
         [HideInInspector] _AlphaCutoff("Alpha Cutoff", Range(0, 1)) = 0.5
         [HideInInspector] _QueueOffset("_QueueOffset", Float) = 0
@@ -140,7 +178,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         ZTest LEqual
         AlphaToMask Off
 
-        // HLSL includes for all passes
         HLSLINCLUDE
         #pragma target 4.5
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
@@ -151,7 +188,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityGBuffer.hlsl"
 
-        // Shader features
         #pragma shader_feature_local ENABLE_NORMAL_INTENSITY
         #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
         #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
@@ -166,7 +202,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         #pragma multi_compile_instancing
         #pragma instancing_options renderinglayer
 
-        // Material properties
         CBUFFER_START(UnityPerMaterial)
             float4 _Control_ST;
             float4 _Control2_ST;
@@ -195,6 +230,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float4 _MaskMap6_ST;
             float4 _MaskMap7_ST;
             float4 _SpecularColor;
+            float _SpecularStrength;
             float4 _ColorTint0, _ColorTint1, _ColorTint2, _ColorTint3;
             float4 _ColorTint4, _ColorTint5, _ColorTint6, _ColorTint7;
             float _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3;
@@ -205,6 +241,19 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float _BlendSmoothness;
             float _LayerVisibility0, _LayerVisibility1, _LayerVisibility2, _LayerVisibility3;
             float _LayerVisibility4, _LayerVisibility5, _LayerVisibility6, _LayerVisibility7;
+            float _HeightBlendEnable0, _HeightBlendEnable1, _HeightBlendEnable2, _HeightBlendEnable3;
+            float _HeightBlendEnable4, _HeightBlendEnable5, _HeightBlendEnable6, _HeightBlendEnable7;
+            float _HeightParametrization0, _HeightParametrization1, _HeightParametrization2, _HeightParametrization3;
+            float _HeightParametrization4, _HeightParametrization5, _HeightParametrization6, _HeightParametrization7;
+            float _HeightAmplitude0, _HeightAmplitude1, _HeightAmplitude2, _HeightAmplitude3;
+            float _HeightAmplitude4, _HeightAmplitude5, _HeightAmplitude6, _HeightAmplitude7;
+            float _HeightBase0, _HeightBase1, _HeightBase2, _HeightBase3;
+            float _HeightBase4, _HeightBase5, _HeightBase6, _HeightBase7;
+            float _HeightMin0, _HeightMin1, _HeightMin2, _HeightMin3;
+            float _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7;
+            float _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3;
+            float _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7;
+            float _HeightTransparencyThreshold;
             float4 _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3;
             float4 _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7;
             float4 _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3;
@@ -213,7 +262,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float4 _RemapAMinMax4, _RemapAMinMax5, _RemapAMinMax6, _RemapAMinMax7;
         CBUFFER_END
 
-        // Texture declarations
         TEXTURE2D(_Control); SAMPLER(sampler_Linear_Clamp);
         TEXTURE2D(_Control2);
         TEXTURE2D(_Splat0); SAMPLER(sampler_Linear_Repeat);
@@ -241,7 +289,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         TEXTURE2D(_MaskMap6);
         TEXTURE2D(_MaskMap7);
 
-        // Vertex input structure
         struct VertexInput
         {
             float4 positionOS : POSITION;
@@ -252,37 +299,52 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             UNITY_VERTEX_INPUT_INSTANCE_ID
         };
 
-        // Vertex output structure for Forward pass
         struct VertexOutput
         {
             float4 positionCS : SV_POSITION;
             float2 uv : TEXCOORD0;
             float3 normalWS : TEXCOORD1;
-            float3 tangentWS : TEXCOORD2;
+            float3 tangentWS : TEXcoord2;
             float3 bitangentWS : TEXCOORD3;
-            float3 positionWS : TEXCOORD4;
-            float4 fogFactorAndVertexLight : TEXCOORD5;
+            float3 positionWS : TEXcoord4;
+            float4 fogFactorAndVertexLight : TEXcoord5;
             float4 shadowCoord : TEXCOORD6;
             float2 lightmapUV : TEXCOORD7;
             UNITY_VERTEX_INPUT_INSTANCE_ID
             UNITY_VERTEX_OUTPUT_STEREO
         };
 
-        // Helper function to adjust normal intensity
         float3 AdjustNormalIntensity(float3 normal, float intensity)
         {
             return lerp(normal, float3(0, 0, 1), 1.0 - intensity);
         }
 
-        // Helper function to remap values
         inline float Remap(float value, float inMin, float inMax, float outMin, float outMax)
         {
             return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
         }
 
+        float ComputeHeightBlendWeight(float height, float weight, float heightEnable, float heightParametrization, float heightAmplitude, float heightBase, float heightMin, float heightMax, float threshold)
+        {
+            if (heightEnable < 0.5)
+                return weight;
+
+            float scaledHeight;
+            if (heightParametrization < 0.5)
+            {
+                scaledHeight = height * heightAmplitude + heightBase;
+            }
+            else
+            {
+                scaledHeight = Remap(height, 0.0, 1.0, heightMin, heightMax);
+            }
+
+            float transparencyFactor = smoothstep(threshold, 1.0, scaledHeight);
+            return weight * (1.0 - transparencyFactor) + weight * scaledHeight * transparencyFactor;
+        }
+
         ENDHLSL
 
-        // Forward Pass
         Pass
         {
             Name "Forward"
@@ -332,13 +394,11 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                // Sample control textures with MipMap Bias
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
                 float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
                 float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
 
-                // Apply layer visibility to weights
                 weights1.r *= _LayerVisibility0;
                 weights1.g *= _LayerVisibility1;
                 weights1.b *= _LayerVisibility2;
@@ -348,24 +408,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 weights2.b *= _LayerVisibility6;
                 weights2.a *= _LayerVisibility7;
 
-                // Normalize weights within each control map
-                float sumWeights1 = weights1.r + weights1.g + weights1.b + weights1.a;
-                float sumWeights2 = weights2.r + weights2.g + weights2.b + weights2.a;
-                weights1 = sumWeights1 > 0.0 ? weights1 / sumWeights1 : float4(0, 0, 0, 0);
-                weights2 = sumWeights2 > 0.0 ? weights2 / sumWeights2 : float4(0, 0, 0, 0);
-
-                // Compute smooth blending factor for Control2 using smoothstep
-                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
-
-                // UVs for textures
-                float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
-                float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
-                float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
-                float2 uv3 = TRANSFORM_TEX(IN.uv, _Splat3);
-                float2 uv4 = TRANSFORM_TEX(IN.uv, _Splat4);
-                float2 uv5 = TRANSFORM_TEX(IN.uv, _Splat5);
-                float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
-                float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
                 float2 uvMask0 = TRANSFORM_TEX(IN.uv, _MaskMap0);
                 float2 uvMask1 = TRANSFORM_TEX(IN.uv, _MaskMap1);
                 float2 uvMask2 = TRANSFORM_TEX(IN.uv, _MaskMap2);
@@ -375,7 +417,60 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
                 float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
 
-                // Sample albedo textures with MipMap Bias and apply color tints
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
+
+                float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
+                float heightBlendEnables[8] = { _HeightBlendEnable0, _HeightBlendEnable1, _HeightBlendEnable2, _HeightBlendEnable3,
+                                                _HeightBlendEnable4, _HeightBlendEnable5, _HeightBlendEnable6, _HeightBlendEnable7 };
+                float heightParametrizations[8] = { _HeightParametrization0, _HeightParametrization1, _HeightParametrization2, _HeightParametrization3,
+                                                    _HeightParametrization4, _HeightParametrization5, _HeightParametrization6, _HeightParametrization7 };
+                float heightAmplitudes[8] = { _HeightAmplitude0, _HeightAmplitude1, _HeightAmplitude2, _HeightAmplitude3,
+                                              _HeightAmplitude4, _HeightAmplitude5, _HeightAmplitude6, _HeightAmplitude7 };
+                float heightBases[8] = { _HeightBase0, _HeightBase1, _HeightBase2, _HeightBase3,
+                                         _HeightBase4, _HeightBase5, _HeightBase6, _HeightBase7 };
+                float heightMins[8] = { _HeightMin0, _HeightMin1, _HeightMin2, _HeightMin3,
+                                        _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
+                float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
+                                        _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
+
+                float heights[8];
+                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
+                                          weights2.r, weights2.g, weights2.b, weights2.a };
+
+                for (int idxHeight = 0; idxHeight < 8; idxHeight++)
+                {
+                    bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
+                    heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
+                    weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
+                }
+
+                weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
+                weights2 = float4(weightsArray[4], weightsArray[5], weightsArray[6], weightsArray[7]);
+
+                float sumWeights1 = max(weights1.r + weights1.g + weights1.b + weights1.a, 0.001);
+                float sumWeights2 = max(weights2.r + weights2.g + weights2.b + weights2.a, 0.001);
+                weights1 /= sumWeights1;
+                weights2 /= sumWeights2;
+
+                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
+
+                float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
+                float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
+                float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
+                float2 uv3 = TRANSFORM_TEX(IN.uv, _Splat3);
+                float2 uv4 = TRANSFORM_TEX(IN.uv, _Splat4);
+                float2 uv5 = TRANSFORM_TEX(IN.uv, _Splat5);
+                float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
+                float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
+
                 float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
                 float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
                 float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
@@ -385,14 +480,11 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
                 float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
-                // Compute contributions from each control map
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
                 float4 albedo2 = tex4 * weights2.r + tex5 * weights2.g + tex6 * weights2.b + tex7 * weights2.a;
 
-                // Blend albedo using smooth blending factor
                 float3 baseColor = lerp(albedo1.rgb, albedo2.rgb, blendFactor);
 
-                // Sample normal maps with MipMap Bias
                 float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
                 float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
                 float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
@@ -413,34 +505,20 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                     normal7 = AdjustNormalIntensity(normal7, _NormalIntensity7);
                 #endif
 
-                // Blend normals using smooth blending factor
                 float4 blendedNormal1 = weights1.r * float4(normal0, 0) + weights1.g * float4(normal1, 0) +
                                         weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
                 float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.g * float4(normal5, 0) +
                                         weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
                 float3 normalTS = lerp(blendedNormal1.xyz, blendedNormal2.xyz, blendFactor);
-                normalTS = normalize(normalTS); // Normalize to prevent artifacts
+                normalTS = normalize(normalTS);
 
-                // Transform normal to world space
                 float3x3 tangentToWorld = float3x3(IN.tangentWS, IN.bitangentWS, IN.normalWS);
                 float3 normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
                 normalWS = NormalizeNormalPerPixel(normalWS);
 
-                // Sample mask maps with MipMap Bias
-                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
-                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
-                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
-                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
-                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
-                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
-                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
-                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
-
-                // Process mask maps
                 float metallic[8];
                 float occlusion[8];
                 float smoothness[8];
-                float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
                 float4 remapRMinMax[8] = { _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3,
                                            _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7 };
                 float4 remapGMinMax[8] = { _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3,
@@ -450,52 +528,53 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float defaultSmoothness[8] = { _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3,
                                                _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7 };
 
-                for (int i = 0; i < 8; i++)
+                for (int idxPBR = 0; idxPBR < 8; idxPBR++)
                 {
-                    bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
+                    bool hasMaskMap = !all(maskMaps[idxPBR] == float4(1,1,1,1));
                     if (hasMaskMap)
                     {
-                        metallic[i] = Remap(maskMaps[i].r, 0.0, 1.0, remapRMinMax[i].x, remapRMinMax[i].y);
-                        occlusion[i] = Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y);
-                        smoothness[i] = Remap(maskMaps[i].a, 0.0, 1.0, remapAMinMax[i].x, remapAMinMax[i].y);
+                        metallic[idxPBR] = Remap(maskMaps[idxPBR].r, 0.0, 1.0, remapRMinMax[idxPBR].x, remapRMinMax[idxPBR].y);
+                        occlusion[idxPBR] = Remap(maskMaps[idxPBR].g, 0.0, 1.0, remapGMinMax[idxPBR].x, remapGMinMax[idxPBR].y);
+                        smoothness[idxPBR] = Remap(maskMaps[idxPBR].a, 0.0, 1.0, remapAMinMax[idxPBR].x, remapAMinMax[idxPBR].y);
                     }
                     else
                     {
-                        metallic[i] = 0.0;
-                        occlusion[i] = 1.0;
-                        smoothness[i] = defaultSmoothness[i];
+                        metallic[idxPBR] = 0.0;
+                        occlusion[idxPBR] = 1.0;
+                        smoothness[idxPBR] = defaultSmoothness[idxPBR];
                     }
                 }
 
-                // Blend PBR parameters using smooth blending factor
                 float finalMetallic = 0.0;
                 float finalOcclusion = 1.0;
                 float finalSmoothness = 0.0;
-                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
-                                          weights2.r, weights2.g, weights2.b, weights2.a };
-                for (int i = 0; i < 4; i++)
+                for (int idxBlend1 = 0; idxBlend1 < 4; idxBlend1++)
                 {
-                    finalMetallic += metallic[i] * weights1[i] * (1.0 - blendFactor);
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
-                    finalSmoothness += smoothness[i] * weights1[i] * (1.0 - blendFactor);
+                    finalMetallic += metallic[idxBlend1] * weights1[idxBlend1] * (1.0 - blendFactor);
+                    finalOcclusion *= lerp(1.0, occlusion[idxBlend1], weights1[idxBlend1] * (1.0 - blendFactor));
+                    finalSmoothness += smoothness[idxBlend1] * weights1[idxBlend1] * (1.0 - blendFactor);
                 }
-                for (int i = 4; i < 8; i++)
+                for (int idxBlend2 = 4; idxBlend2 < 8; idxBlend2++)
                 {
-                    finalMetallic += metallic[i] * weights2[i - 4] * blendFactor;
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
-                    finalSmoothness += smoothness[i] * weights2[i - 4] * blendFactor;
+                    finalMetallic += metallic[idxBlend2] * weights2[idxBlend2 - 4] * blendFactor;
+                    finalOcclusion *= lerp(1.0, occlusion[idxBlend2], weights2[idxBlend2 - 4] * blendFactor);
+                    finalSmoothness += smoothness[idxBlend2] * weights2[idxBlend2 - 4] * blendFactor;
                 }
 
-                // Apply occlusion to albedo
                 baseColor *= finalOcclusion;
 
-                // Set up surface data
+                float3 viewDirWS = SafeNormalize(_WorldSpaceCameraPos.xyz - IN.positionWS);
+                float3 lightDirWS = _MainLightPosition.xyz;
+                float3 halfwayDir = SafeNormalize(lightDirWS + viewDirWS);
+                float specFactor = pow(max(dot(normalWS, halfwayDir), 0.0), finalSmoothness * 128.0);
+                float3 specularContrib = _SpecularColor.rgb * specFactor * _SpecularStrength;
+                baseColor += specularContrib;
+
                 InputData inputData = (InputData)0;
                 inputData.positionWS = IN.positionWS;
                 inputData.viewDirectionWS = SafeNormalize(_WorldSpaceCameraPos.xyz - IN.positionWS);
                 inputData.normalWS = normalWS;
 
-                // Compute shadowCoord for all shadow modes
                 #if defined(_MAIN_LIGHT_SHADOWS_SCREEN) && !defined(_SURFACE_TYPE_TRANSPARENT)
                     inputData.shadowCoord = ComputeScreenPos(IN.positionCS);
                 #elif defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
@@ -512,10 +591,10 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
 
                 SurfaceData surfaceData = (SurfaceData)0;
                 surfaceData.albedo = baseColor;
-                surfaceData.specular = _SpecularColor.rgb;
+                surfaceData.specular = _SpecularColor.rgb * _SpecularStrength;
                 surfaceData.metallic = finalMetallic;
                 surfaceData.smoothness = finalSmoothness;
-                surfaceData.occlusion = 1.0; // Occlusion already applied to albedo
+                surfaceData.occlusion = 1.0;
                 surfaceData.emission = 0;
                 surfaceData.alpha = 1;
                 surfaceData.normalTS = normalTS;
@@ -528,7 +607,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             ENDHLSL
         }
 
-        // ShadowCaster Pass
         Pass
         {
             Name "ShadowCaster"
@@ -563,7 +641,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 return o;
             }
 
-            half4 fragShadow(VertexOutputShadow IN) : SV_Target
+            half fragShadow(VertexOutputShadow IN) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
@@ -572,7 +650,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             ENDHLSL
         }
 
-        // DepthOnly Pass
         Pass
         {
             Name "DepthOnly"
@@ -605,7 +682,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 return o;
             }
 
-            half4 fragDepth(VertexOutputDepth IN) : SV_Target
+            half fragDepth(VertexOutputDepth IN) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
@@ -614,7 +691,167 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             ENDHLSL
         }
 
-        // Meta Pass
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+
+            ZWrite On
+            ZTest LEqual
+
+            HLSLPROGRAM
+            #pragma vertex vertDepthNormals
+            #pragma fragment fragDepthNormals
+            #define SHADERPASS SHADERPASS_DEPTHNORMALS
+
+            struct VertexOutputDepthNormals
+            {
+                float4 positionCS : SV_POSITION;
+                float3 normalWS : TEXCOORD1;
+                float3 tangentWS : TEXCOORD2;
+                float3 bitangentWS : TEXCOORD3;
+                float2 uv : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            VertexOutputDepthNormals vertDepthNormals(VertexInput v)
+            {
+                VertexOutputDepthNormals o = (VertexOutputDepthNormals)0;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(v.positionOS.xyz);
+                VertexNormalInputs normalInput = GetVertexNormalInputs(v.normalOS, v.tangentOS);
+
+                o.positionCS = vertexInput.positionCS;
+                o.normalWS = normalInput.normalWS;
+                o.tangentWS = normalInput.tangentWS;
+                o.bitangentWS = normalInput.bitangentWS;
+                o.uv = v.texcoord;
+
+                return o;
+            }
+
+            float4 fragDepthNormals(VertexOutputDepthNormals IN) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(IN);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
+
+                float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
+                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
+                float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
+                float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
+
+                weights1.r *= _LayerVisibility0;
+                weights1.g *= _LayerVisibility1;
+                weights1.b *= _LayerVisibility2;
+                weights1.a *= _LayerVisibility3;
+                weights2.r *= _LayerVisibility4;
+                weights2.g *= _LayerVisibility5;
+                weights2.b *= _LayerVisibility6;
+                weights2.a *= _LayerVisibility7;
+
+                float2 uvMask0 = TRANSFORM_TEX(IN.uv, _MaskMap0);
+                float2 uvMask1 = TRANSFORM_TEX(IN.uv, _MaskMap1);
+                float2 uvMask2 = TRANSFORM_TEX(IN.uv, _MaskMap2);
+                float2 uvMask3 = TRANSFORM_TEX(IN.uv, _MaskMap3);
+                float2 uvMask4 = TRANSFORM_TEX(IN.uv, _MaskMap4);
+                float2 uvMask5 = TRANSFORM_TEX(IN.uv, _MaskMap5);
+                float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
+                float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
+
+                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
+                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
+                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
+                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
+                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
+                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
+                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
+                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
+
+                float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
+                float heightBlendEnables[8] = { _HeightBlendEnable0, _HeightBlendEnable1, _HeightBlendEnable2, _HeightBlendEnable3,
+                                                _HeightBlendEnable4, _HeightBlendEnable5, _HeightBlendEnable6, _HeightBlendEnable7 };
+                float heightParametrizations[8] = { _HeightParametrization0, _HeightParametrization1, _HeightParametrization2, _HeightParametrization3,
+                                                    _HeightParametrization4, _HeightParametrization5, _HeightParametrization6, _HeightParametrization7 };
+                float heightAmplitudes[8] = { _HeightAmplitude0, _HeightAmplitude1, _HeightAmplitude2, _HeightAmplitude3,
+                                              _HeightAmplitude4, _HeightAmplitude5, _HeightAmplitude6, _HeightAmplitude7 };
+                float heightBases[8] = { _HeightBase0, _HeightBase1, _HeightBase2, _HeightBase3,
+                                         _HeightBase4, _HeightBase5, _HeightBase6, _HeightBase7 };
+                float heightMins[8] = { _HeightMin0, _HeightMin1, _HeightMin2, _HeightMin3,
+                                        _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
+                float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
+                                        _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
+
+                float heights[8];
+                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
+                                          weights2.r, weights2.g, weights2.b, weights2.a };
+
+                for (int idxHeight = 0; idxHeight < 8; idxHeight++)
+                {
+                    bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
+                    heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
+                    weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
+                }
+
+                weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
+                weights2 = float4(weightsArray[4], weightsArray[5], weightsArray[6], weightsArray[7]);
+
+                float sumWeights1 = max(weights1.r + weights1.g + weights1.b + weights1.a, 0.001);
+                float sumWeights2 = max(weights2.r + weights2.g + weights2.b + weights2.a, 0.001);
+                weights1 /= sumWeights1;
+                weights2 /= sumWeights2;
+
+                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
+
+                float2 uv0 = TRANSFORM_TEX(IN.uv, _Normal0);
+                float2 uv1 = TRANSFORM_TEX(IN.uv, _Normal1);
+                float2 uv2 = TRANSFORM_TEX(IN.uv, _Normal2);
+                float2 uv3 = TRANSFORM_TEX(IN.uv, _Normal3);
+                float2 uv4 = TRANSFORM_TEX(IN.uv, _Normal4);
+                float2 uv5 = TRANSFORM_TEX(IN.uv, _Normal5);
+                float2 uv6 = TRANSFORM_TEX(IN.uv, _Normal6);
+                float2 uv7 = TRANSFORM_TEX(IN.uv, _Normal7);
+
+                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
+                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
+                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
+                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
+                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
+                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
+                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
+                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
+
+                #ifdef ENABLE_NORMAL_INTENSITY
+                    normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
+                    normal1 = AdjustNormalIntensity(normal1, _NormalIntensity1);
+                    normal2 = AdjustNormalIntensity(normal2, _NormalIntensity2);
+                    normal3 = AdjustNormalIntensity(normal3, _NormalIntensity3);
+                    normal4 = AdjustNormalIntensity(normal4, _NormalIntensity4);
+                    normal5 = AdjustNormalIntensity(normal5, _NormalIntensity5);
+                    normal6 = AdjustNormalIntensity(normal6, _NormalIntensity6);
+                    normal7 = AdjustNormalIntensity(normal7, _NormalIntensity7);
+                #endif
+
+                float4 blendedNormal1 = weights1.r * float4(normal0, 0) + weights1.g * float4(normal1, 0) +
+                                        weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
+                float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.g * float4(normal5, 0) +
+                                        weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
+                float3 normalTS = lerp(blendedNormal1.xyz, blendedNormal2.xyz, blendFactor);
+                normalTS = normalize(normalTS);
+
+                float3x3 tangentToWorld = float3x3(IN.tangentWS, IN.bitangentWS, IN.normalWS);
+                float3 normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
+                normalWS = NormalizeNormalPerPixel(normalWS);
+
+                return float4(normalWS, 0);
+            }
+            ENDHLSL
+        }
+
         Pass
         {
             Name "Meta"
@@ -643,7 +880,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 UNITY_TRANSFER_INSTANCE_ID(v, o);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-                o.positionCS = MetaVertexPosition(v.positionOS, v.lightmapUV, v.lightmapUV, unity_LightmapST, unity_DynamicLightmapST);
+                o.positionCS = MetaVertexPosition(v.positionOS, v.texcoord, v.lightmapUV, unity_LightmapST, unity_DynamicLightmapST);
                 o.uv = v.texcoord;
                 return o;
             }
@@ -653,13 +890,11 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                // Sample control textures with MipMap Bias
                 float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
                 float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
                 float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
                 float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
 
-                // Apply layer visibility to weights
                 weights1.r *= _LayerVisibility0;
                 weights1.g *= _LayerVisibility1;
                 weights1.b *= _LayerVisibility2;
@@ -669,41 +904,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 weights2.b *= _LayerVisibility6;
                 weights2.a *= _LayerVisibility7;
 
-                // Normalize weights within each control map
-                float sumWeights1 = weights1.r + weights1.g + weights1.b + weights1.a;
-                float sumWeights2 = weights2.r + weights2.g + weights2.b + weights2.a;
-                weights1 = sumWeights1 > 0.0 ? weights1 / sumWeights1 : float4(0, 0, 0, 0);
-                weights2 = sumWeights2 > 0.0 ? weights2 / sumWeights2 : float4(0, 0, 0, 0);
-
-                // Compute smooth blending factor for Control2
-                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
-
-                // UVs for textures
-                float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
-                float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
-                float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
-                float2 uv3 = TRANSFORM_TEX(IN.uv, _Splat3);
-                float2 uv4 = TRANSFORM_TEX(IN.uv, _Splat4);
-                float2 uv5 = TRANSFORM_TEX(IN.uv, _Splat5);
-                float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
-                float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
-
-                // Sample albedo textures with MipMap Bias and apply color tints
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
-
-                // Compute contributions
-                float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
-                float4 albedo2 = tex4 * weights2.r + tex5 * weights2.g + tex6 * weights2.b + tex7 * weights2.a;
-                float4 albedo = lerp(albedo1, albedo2, blendFactor);
-
-                // Sample mask maps for occlusion with MipMap Bias
                 float2 uvMask0 = TRANSFORM_TEX(IN.uv, _MaskMap0);
                 float2 uvMask1 = TRANSFORM_TEX(IN.uv, _MaskMap1);
                 float2 uvMask2 = TRANSFORM_TEX(IN.uv, _MaskMap2);
@@ -722,107 +922,42 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
                 float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
 
-                float occlusion[8];
                 float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
-                float4 remapGMinMax[8] = { _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3,
-                                           _RemapGMinMax4, _RemapGMinMax5, _RemapGMinMax6, _RemapGMinMax7 };
+                float heightBlendEnables[8] = { _HeightBlendEnable0, _HeightBlendEnable1, _HeightBlendEnable2, _HeightBlendEnable3,
+                                                _HeightBlendEnable4, _HeightBlendEnable5, _HeightBlendEnable6, _HeightBlendEnable7 };
+                float heightParametrizations[8] = { _HeightParametrization0, _HeightParametrization1, _HeightParametrization2, _HeightParametrization3,
+                                                    _HeightParametrization4, _HeightParametrization5, _HeightParametrization6, _HeightParametrization7 };
+                float heightAmplitudes[8] = { _HeightAmplitude0, _HeightAmplitude1, _HeightAmplitude2, _HeightAmplitude3,
+                                              _HeightAmplitude4, _HeightAmplitude5, _HeightAmplitude6, _HeightAmplitude7 };
+                float heightBases[8] = { _HeightBase0, _HeightBase1, _HeightBase2, _HeightBase3,
+                                         _HeightBase4, _HeightBase5, _HeightBase6, _HeightBase7 };
+                float heightMins[8] = { _HeightMin0, _HeightMin1, _HeightMin2, _HeightMin3,
+                                        _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
+                float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
+                                        _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
 
-                for (int i = 0; i < 8; i++)
-                {
-                    bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
-                    occlusion[i] = hasMaskMap ? Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y) : 1.0;
-                }
-
-                float finalOcclusion = 1.0;
+                float heights[8];
                 float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
                                           weights2.r, weights2.g, weights2.b, weights2.a };
-                for (int i = 0; i < 4; i++)
+
+                for (int idxHeight = 0; idxHeight < 8; idxHeight++)
                 {
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
+                    bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
+                    heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
+                    weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
                 }
-                for (int i = 4; i < 8; i++)
-                {
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
-                }
 
-                // Apply occlusion to albedo
-                albedo.rgb *= finalOcclusion;
+                weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
+                weights2 = float4(weightsArray[4], weightsArray[5], weightsArray[6], weightsArray[7]);
 
-                MetaInput metaInput = (MetaInput)0;
-                metaInput.Albedo = albedo.rgb;
-                metaInput.Emission = 0;
+                float sumWeights1 = max(weights1.r + weights1.g + weights1.b + weights1.a, 0.001);
+                float sumWeights2 = max(weights2.r + weights2.g + weights2.b + weights2.a, 0.001);
+                weights1 /= sumWeights1;
+                weights2 /= sumWeights2;
 
-                return MetaFragment(metaInput);
-            }
-            ENDHLSL
-        }
-
-        // Universal2D Pass
-        Pass
-        {
-            Name "Universal2D"
-            Tags { "LightMode" = "Universal2D" }
-
-            Blend One Zero
-            ZWrite On
-            ZTest LEqual
-
-            HLSLPROGRAM
-            #pragma vertex vert2D
-            #pragma fragment frag2D
-            #define SHADERPASS SHADERPASS_2D
-
-            struct VertexOutput2D
-            {
-                float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
-                UNITY_VERTEX_OUTPUT_STEREO
-            };
-
-            VertexOutput2D vert2D(VertexInput v)
-            {
-                VertexOutput2D o = (VertexOutput2D)0;
-                UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_TRANSFER_INSTANCE_ID(v, o);
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-
-                o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.uv = v.texcoord;
-                return o;
-            }
-
-            half4 frag2D(VertexOutput2D IN) : SV_Target
-            {
-                UNITY_SETUP_INSTANCE_ID(IN);
-                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-
-                // Sample control textures with MipMap Bias
-                float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
-                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
-                float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
-                float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
-
-                // Apply layer visibility to weights
-                weights1.r *= _LayerVisibility0;
-                weights1.g *= _LayerVisibility1;
-                weights1.b *= _LayerVisibility2;
-                weights1.a *= _LayerVisibility3;
-                weights2.r *= _LayerVisibility4;
-                weights2.g *= _LayerVisibility5;
-                weights2.b *= _LayerVisibility6;
-                weights2.a *= _LayerVisibility7;
-
-                // Normalize weights within each control map
-                float sumWeights1 = weights1.r + weights1.g + weights1.b + weights1.a;
-                float sumWeights2 = weights2.r + weights2.g + weights2.b + weights2.a;
-                weights1 = sumWeights1 > 0.0 ? weights1 / sumWeights1 : float4(0, 0, 0, 0);
-                weights2 = sumWeights2 > 0.0 ? weights2 / sumWeights2 : float4(0, 0, 0, 0);
-
-                // Compute smooth blending factor for Control2
                 float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
 
-                // UVs for textures
                 float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
                 float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
                 float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
@@ -832,7 +967,6 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
                 float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
 
-                // Sample albedo textures with MipMap Bias and apply color tints
                 float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
                 float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
                 float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
@@ -842,445 +976,42 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
                 float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
 
-                // Compute contributions
                 float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
                 float4 albedo2 = tex4 * weights2.r + tex5 * weights2.g + tex6 * weights2.b + tex7 * weights2.a;
-                float4 albedo = lerp(albedo1, albedo2, blendFactor);
 
-                // Sample mask maps for occlusion with MipMap Bias
-                float2 uvMask0 = TRANSFORM_TEX(IN.uv, _MaskMap0);
-                float2 uvMask1 = TRANSFORM_TEX(IN.uv, _MaskMap1);
-                float2 uvMask2 = TRANSFORM_TEX(IN.uv, _MaskMap2);
-                float2 uvMask3 = TRANSFORM_TEX(IN.uv, _MaskMap3);
-                float2 uvMask4 = TRANSFORM_TEX(IN.uv, _MaskMap4);
-                float2 uvMask5 = TRANSFORM_TEX(IN.uv, _MaskMap5);
-                float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
-                float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
-
-                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
-                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
-                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
-                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
-                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
-                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
-                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
-                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
-
-                float occlusion[8];
-                float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
-                float4 remapGMinMax[8] = { _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3,
-                                           _RemapGMinMax4, _RemapGMinMax5, _RemapGMinMax6, _RemapGMinMax7 };
-
-                for (int i = 0; i < 8; i++)
-                {
-                    bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
-                    occlusion[i] = hasMaskMap ? Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y) : 1.0;
-                }
-
-                float finalOcclusion = 1.0;
-                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
-                                          weights2.r, weights2.g, weights2.b, weights2.a };
-                for (int i = 0; i < 4; i++)
-                {
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
-                }
-                for (int i = 4; i < 8; i++)
-                {
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
-                }
-
-                // Apply occlusion to albedo
-                albedo.rgb *= finalOcclusion;
-
-                half4 color = half4(albedo.rgb, 1);
-                return color;
-            }
-            ENDHLSL
-        }
-
-        // DepthNormals Pass
-        Pass
-        {
-            Name "DepthNormals"
-            Tags { "LightMode" = "DepthNormals" }
-
-            ZWrite On
-            ZTest LEqual
-
-            HLSLPROGRAM
-            #pragma vertex vertDepthNormals
-            #pragma fragment fragDepthNormals
-            #define SHADERPASS SHADERPASS_DEPTHNORMALS
-
-            struct VertexOutputDepthNormals
-            {
-                float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                float3 normalWS : TEXCOORD1;
-                float3 tangentWS : TEXCOORD2;
-                float3 bitangentWS : TEXCOORD3;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
-                UNITY_VERTEX_OUTPUT_STEREO
-            };
-
-            VertexOutputDepthNormals vertDepthNormals(VertexInput v)
-            {
-                VertexOutputDepthNormals o = (VertexOutputDepthNormals)0;
-                UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_TRANSFER_INSTANCE_ID(v, o);
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(v.positionOS.xyz);
-                VertexNormalInputs normalInput = GetVertexNormalInputs(v.normalOS, v.tangentOS);
-
-                o.positionCS = vertexInput.positionCS;
-                o.normalWS = normalInput.normalWS;
-                o.tangentWS = normalInput.tangentWS;
-                o.bitangentWS = normalInput.bitangentWS;
-                o.uv = v.texcoord;
-
-                return o;
-            }
-
-            void fragDepthNormals(VertexOutputDepthNormals IN, out half4 outNormalWS : SV_Target0, out float outDepth : SV_Depth)
-            {
-                UNITY_SETUP_INSTANCE_ID(IN);
-                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-
-                // Sample control textures with MipMap Bias
-                float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
-                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
-                float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
-                float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
-
-                // Apply layer visibility to weights
-                weights1.r *= _LayerVisibility0;
-                weights1.g *= _LayerVisibility1;
-                weights1.b *= _LayerVisibility2;
-                weights1.a *= _LayerVisibility3;
-                weights2.r *= _LayerVisibility4;
-                weights2.g *= _LayerVisibility5;
-                weights2.b *= _LayerVisibility6;
-                weights2.a *= _LayerVisibility7;
-
-                // Normalize weights within each control map
-                float sumWeights1 = weights1.r + weights1.g + weights1.b + weights1.a;
-                float sumWeights2 = weights2.r + weights2.g + weights2.b + weights2.a;
-                weights1 = sumWeights1 > 0.0 ? weights1 / sumWeights1 : float4(0, 0, 0, 0);
-                weights2 = sumWeights2 > 0.0 ? weights2 / sumWeights2 : float4(0, 0, 0, 0);
-
-                // Compute smooth blending factor for Control2
-                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
-
-                // UVs for textures
-                float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
-                float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
-                float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
-                float2 uv3 = TRANSFORM_TEX(IN.uv, _Splat3);
-                float2 uv4 = TRANSFORM_TEX(IN.uv, _Splat4);
-                float2 uv5 = TRANSFORM_TEX(IN.uv, _Splat5);
-                float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
-                float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
-
-                // Sample normal maps with MipMap Bias
-                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
-                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
-                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
-                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
-                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
-                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
-                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
-                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
-
-                #ifdef ENABLE_NORMAL_INTENSITY
-                    normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
-                    normal1 = AdjustNormalIntensity(normal1, _NormalIntensity1);
-                    normal2 = AdjustNormalIntensity(normal2, _NormalIntensity2);
-                    normal3 = AdjustNormalIntensity(normal3, _NormalIntensity3);
-                    normal4 = AdjustNormalIntensity(normal4, _NormalIntensity4);
-                    normal5 = AdjustNormalIntensity(normal5, _NormalIntensity5);
-                    normal6 = AdjustNormalIntensity(normal6, _NormalIntensity6);
-                    normal7 = AdjustNormalIntensity(normal7, _NormalIntensity7);
-                #endif
-
-                // Blend normals using smooth blending factor
-                float4 blendedNormal1 = weights1.r * float4(normal0, 0) + weights1.g * float4(normal1, 0) +
-                                        weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
-                float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.g * float4(normal5, 0) +
-                                        weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
-                float3 normalTS = lerp(blendedNormal1.xyz, blendedNormal2.xyz, blendFactor);
-                normalTS = normalize(normalTS);
-
-                // Transform normal to world space
-                float3x3 tangentToWorld = float3x3(IN.tangentWS, IN.bitangentWS, IN.normalWS);
-                float3 normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
-                normalWS = NormalizeNormalPerPixel(normalWS);
-
-                outNormalWS = half4(normalWS, 0);
-                outDepth = IN.positionCS.z;
-            }
-            ENDHLSL
-        }
-
-        // GBuffer Pass
-        Pass
-        {
-            Name "GBuffer"
-            Tags { "LightMode" = "UniversalGBuffer" }
-
-            ZWrite On
-            ZTest LEqual
-
-            HLSLPROGRAM
-            #pragma vertex vertGBuffer
-            #pragma fragment fragGBuffer
-            #define SHADERPASS SHADERPASS_GBUFFER
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityGBuffer.hlsl"
-
-            struct VertexOutputGBuffer
-            {
-                float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                float3 normalWS : TEXCOORD1;
-                float3 tangentWS : TEXCOORD2;
-                float3 bitangentWS : TEXCOORD3;
-                float3 positionWS : TEXCOORD4;
-                float4 shadowCoord : TEXCOORD5;
-                float2 lightmapUV : TEXCOORD6;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
-                UNITY_VERTEX_OUTPUT_STEREO
-            };
-
-            VertexOutputGBuffer vertGBuffer(VertexInput v)
-            {
-                VertexOutputGBuffer o = (VertexOutputGBuffer)0;
-                UNITY_SETUP_INSTANCE_ID(v);
-                UNITY_TRANSFER_INSTANCE_ID(v, o);
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(v.positionOS.xyz);
-                VertexNormalInputs normalInput = GetVertexNormalInputs(v.normalOS, v.tangentOS);
-
-                o.positionCS = vertexInput.positionCS;
-                o.positionWS = vertexInput.positionWS;
-                o.normalWS = normalInput.normalWS;
-                o.tangentWS = normalInput.tangentWS;
-                o.bitangentWS = normalInput.bitangentWS;
-                o.uv = v.texcoord;
-
-                #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-                    o.shadowCoord = GetShadowCoord(vertexInput);
-                #endif
-
-                OUTPUT_LIGHTMAP_UV(v.lightmapUV, unity_LightmapST, o.lightmapUV);
-
-                return o;
-            }
-
-            void fragGBuffer(VertexOutputGBuffer IN,
-                            out half4 outGBuffer0 : SV_Target0,
-                            out half4 outGBuffer1 : SV_Target1,
-                            out half4 outGBuffer2 : SV_Target2,
-                            out half4 outGBuffer3 : SV_Target3,
-                            out float outDepth : SV_Depth)
-            {
-                UNITY_SETUP_INSTANCE_ID(IN);
-                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-
-                // Sample control textures with MipMap Bias
-                float2 uvControl = TRANSFORM_TEX(IN.uv, _Control);
-                float4 weights1 = SAMPLE_TEXTURE2D_BIAS(_Control, sampler_Linear_Clamp, uvControl, _MipMapBias);
-                float2 uvControl2 = TRANSFORM_TEX(IN.uv, _Control2);
-                float4 weights2 = SAMPLE_TEXTURE2D_BIAS(_Control2, sampler_Linear_Clamp, uvControl2, _MipMapBias);
-
-                // Apply layer visibility to weights
-                weights1.r *= _LayerVisibility0;
-                weights1.g *= _LayerVisibility1;
-                weights1.b *= _LayerVisibility2;
-                weights1.a *= _LayerVisibility3;
-                weights2.r *= _LayerVisibility4;
-                weights2.g *= _LayerVisibility5;
-                weights2.b *= _LayerVisibility6;
-                weights2.a *= _LayerVisibility7;
-
-                // Normalize weights within each control map
-                float sumWeights1 = weights1.r + weights1.g + weights1.b + weights1.a;
-                float sumWeights2 = weights2.r + weights2.g + weights2.b + weights2.a;
-                weights1 = sumWeights1 > 0.0 ? weights1 / sumWeights1 : float4(0, 0, 0, 0);
-                weights2 = sumWeights2 > 0.0 ? weights2 / sumWeights2 : float4(0, 0, 0, 0);
-
-                // Compute smooth blending factor for Control2
-                float blendFactor = smoothstep(0.0, _BlendSmoothness, sumWeights2);
-
-                // UVs for textures
-                float2 uv0 = TRANSFORM_TEX(IN.uv, _Splat0);
-                float2 uv1 = TRANSFORM_TEX(IN.uv, _Splat1);
-                float2 uv2 = TRANSFORM_TEX(IN.uv, _Splat2);
-                float2 uv3 = TRANSFORM_TEX(IN.uv, _Splat3);
-                float2 uv4 = TRANSFORM_TEX(IN.uv, _Splat4);
-                float2 uv5 = TRANSFORM_TEX(IN.uv, _Splat5);
-                float2 uv6 = TRANSFORM_TEX(IN.uv, _Splat6);
-                float2 uv7 = TRANSFORM_TEX(IN.uv, _Splat7);
-                float2 uvMask0 = TRANSFORM_TEX(IN.uv, _MaskMap0);
-                float2 uvMask1 = TRANSFORM_TEX(IN.uv, _MaskMap1);
-                float2 uvMask2 = TRANSFORM_TEX(IN.uv, _MaskMap2);
-                float2 uvMask3 = TRANSFORM_TEX(IN.uv, _MaskMap3);
-                float2 uvMask4 = TRANSFORM_TEX(IN.uv, _MaskMap4);
-                float2 uvMask5 = TRANSFORM_TEX(IN.uv, _MaskMap5);
-                float2 uvMask6 = TRANSFORM_TEX(IN.uv, _MaskMap6);
-                float2 uvMask7 = TRANSFORM_TEX(IN.uv, _MaskMap7);
-
-                // Sample albedo textures with MipMap Bias and apply color tints
-                float4 tex0 = SAMPLE_TEXTURE2D_BIAS(_Splat0, sampler_Linear_Repeat, uv0, _MipMapBias) * _ColorTint0;
-                float4 tex1 = SAMPLE_TEXTURE2D_BIAS(_Splat1, sampler_Linear_Repeat, uv1, _MipMapBias) * _ColorTint1;
-                float4 tex2 = SAMPLE_TEXTURE2D_BIAS(_Splat2, sampler_Linear_Repeat, uv2, _MipMapBias) * _ColorTint2;
-                float4 tex3 = SAMPLE_TEXTURE2D_BIAS(_Splat3, sampler_Linear_Repeat, uv3, _MipMapBias) * _ColorTint3;
-                float4 tex4 = SAMPLE_TEXTURE2D_BIAS(_Splat4, sampler_Linear_Repeat, uv4, _MipMapBias) * _ColorTint4;
-                float4 tex5 = SAMPLE_TEXTURE2D_BIAS(_Splat5, sampler_Linear_Repeat, uv5, _MipMapBias) * _ColorTint5;
-                float4 tex6 = SAMPLE_TEXTURE2D_BIAS(_Splat6, sampler_Linear_Repeat, uv6, _MipMapBias) * _ColorTint6;
-                float4 tex7 = SAMPLE_TEXTURE2D_BIAS(_Splat7, sampler_Linear_Repeat, uv7, _MipMapBias) * _ColorTint7;
-
-                // Compute contributions
-                float4 albedo1 = tex0 * weights1.r + tex1 * weights1.g + tex2 * weights1.b + tex3 * weights1.a;
-                float4 albedo2 = tex4 * weights2.r + tex5 * weights2.g + tex6 * weights2.b + tex7 * weights2.a;
                 float3 baseColor = lerp(albedo1.rgb, albedo2.rgb, blendFactor);
 
-                // Sample normal maps with MipMap Bias
-                float3 normal0 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal0, sampler_Linear_Repeat, uv0, _MipMapBias), 1.0);
-                float3 normal1 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal1, sampler_Linear_Repeat, uv1, _MipMapBias), 1.0);
-                float3 normal2 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal2, sampler_Linear_Repeat, uv2, _MipMapBias), 1.0);
-                float3 normal3 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal3, sampler_Linear_Repeat, uv3, _MipMapBias), 1.0);
-                float3 normal4 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal4, sampler_Linear_Repeat, uv4, _MipMapBias), 1.0);
-                float3 normal5 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal5, sampler_Linear_Repeat, uv5, _MipMapBias), 1.0);
-                float3 normal6 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal6, sampler_Linear_Repeat, uv6, _MipMapBias), 1.0);
-                float3 normal7 = UnpackNormalScale(SAMPLE_TEXTURE2D_BIAS(_Normal7, sampler_Linear_Repeat, uv7, _MipMapBias), 1.0);
-
-                #ifdef ENABLE_NORMAL_INTENSITY
-                    normal0 = AdjustNormalIntensity(normal0, _NormalIntensity0);
-                    normal1 = AdjustNormalIntensity(normal1, _NormalIntensity1);
-                    normal2 = AdjustNormalIntensity(normal2, _NormalIntensity2);
-                    normal3 = AdjustNormalIntensity(normal3, _NormalIntensity3);
-                    normal4 = AdjustNormalIntensity(normal4, _NormalIntensity4);
-                    normal5 = AdjustNormalIntensity(normal5, _NormalIntensity5);
-                    normal6 = AdjustNormalIntensity(normal6, _NormalIntensity6);
-                    normal7 = AdjustNormalIntensity(normal7, _NormalIntensity7);
-                #endif
-
-                // Blend normals using smooth blending factor
-                float4 blendedNormal1 = weights1.r * float4(normal0, 0) + weights1.g * float4(normal1, 0) +
-                weights1.b * float4(normal2, 0) + weights1.a * float4(normal3, 0);
-                float4 blendedNormal2 = weights2.r * float4(normal4, 0) + weights2.b * float4(normal6, 0) + weights2.a * float4(normal7, 0);
-                float3 normalTS = lerp(blendedNormal1.xyz, blendedNormal2.xyz, blendFactor);
-                normalTS = normalize(normalTS); // Normalize to prevent artifacts
-
-                // Transform normal to world space
-                float3x3 tangentToWorld = float3x3(IN.tangentWS, IN.bitangentWS, IN.normalWS);
-                float3 normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
-                normalWS = NormalizeNormalPerPixel(normalWS);
-
-                // Sample mask maps with MipMap Bias
-                float4 maskMap0 = SAMPLE_TEXTURE2D_BIAS(_MaskMap0, sampler_Linear_Repeat, uvMask0, _MipMapBias);
-                float4 maskMap1 = SAMPLE_TEXTURE2D_BIAS(_MaskMap1, sampler_Linear_Repeat, uvMask1, _MipMapBias);
-                float4 maskMap2 = SAMPLE_TEXTURE2D_BIAS(_MaskMap2, sampler_Linear_Repeat, uvMask2, _MipMapBias);
-                float4 maskMap3 = SAMPLE_TEXTURE2D_BIAS(_MaskMap3, sampler_Linear_Repeat, uvMask3, _MipMapBias);
-                float4 maskMap4 = SAMPLE_TEXTURE2D_BIAS(_MaskMap4, sampler_Linear_Repeat, uvMask4, _MipMapBias);
-                float4 maskMap5 = SAMPLE_TEXTURE2D_BIAS(_MaskMap5, sampler_Linear_Repeat, uvMask5, _MipMapBias);
-                float4 maskMap6 = SAMPLE_TEXTURE2D_BIAS(_MaskMap6, sampler_Linear_Repeat, uvMask6, _MipMapBias);
-                float4 maskMap7 = SAMPLE_TEXTURE2D_BIAS(_MaskMap7, sampler_Linear_Repeat, uvMask7, _MipMapBias);
-
-                // Process mask maps
-                float metallic[8];
                 float occlusion[8];
-                float smoothness[8];
-                float4 maskMaps[8] = { maskMap0, maskMap1, maskMap2, maskMap3, maskMap4, maskMap5, maskMap6, maskMap7 };
-                float4 remapRMinMax[8] = { _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3,
-                                           _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7 };
                 float4 remapGMinMax[8] = { _RemapGMinMax0, _RemapGMinMax1, _RemapGMinMax2, _RemapGMinMax3,
                                            _RemapGMinMax4, _RemapGMinMax5, _RemapGMinMax6, _RemapGMinMax7 };
-                float4 remapAMinMax[8] = { _RemapAMinMax0, _RemapAMinMax1, _RemapAMinMax2, _RemapAMinMax3,
-                                           _RemapAMinMax4, _RemapAMinMax5, _RemapAMinMax6, _RemapAMinMax7 };
-                float defaultSmoothness[8] = { _Smoothness0, _Smoothness1, _Smoothness2, _Smoothness3,
-                                               _Smoothness4, _Smoothness5, _Smoothness6, _Smoothness7 };
 
-                for (int i = 0; i < 8; i++)
+                for (int idxOcclusion = 0; idxOcclusion < 8; idxOcclusion++)
                 {
-                    bool hasMaskMap = !all(maskMaps[i] == float4(1,1,1,1));
-                    if (hasMaskMap)
-                    {
-                        metallic[i] = Remap(maskMaps[i].r, 0.0, 1.0, remapRMinMax[i].x, remapRMinMax[i].y);
-                        occlusion[i] = Remap(maskMaps[i].g, 0.0, 1.0, remapGMinMax[i].x, remapGMinMax[i].y);
-                        smoothness[i] = Remap(maskMaps[i].a, 0.0, 1.0, remapAMinMax[i].x, remapAMinMax[i].y);
-                    }
-                    else
-                    {
-                        metallic[i] = 0.0;
-                        occlusion[i] = 1.0;
-                        smoothness[i] = defaultSmoothness[i];
-                    }
+                    bool hasMaskMap = !all(maskMaps[idxOcclusion] == float4(1,1,1,1));
+                    occlusion[idxOcclusion] = hasMaskMap ? Remap(maskMaps[idxOcclusion].g, 0.0, 1.0, remapGMinMax[idxOcclusion].x, remapGMinMax[idxOcclusion].y) : 1.0;
                 }
 
-                // Blend PBR parameters using smooth blending factor
-                float finalMetallic = 0.0;
                 float finalOcclusion = 1.0;
-                float finalSmoothness = 0.0;
-                float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
-                                          weights2.r, weights2.g, weights2.b, weights2.a };
-                for (int i = 0; i < 4; i++)
+                for (int idxBlend1 = 0; idxBlend1 < 4; idxBlend1++)
                 {
-                    finalMetallic += metallic[i] * weights1[i] * (1.0 - blendFactor);
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights1[i] * (1.0 - blendFactor));
-                    finalSmoothness += smoothness[i] * weights1[i] * (1.0 - blendFactor);
+                    finalOcclusion *= lerp(1.0, occlusion[idxBlend1], weights1[idxBlend1] * (1.0 - blendFactor));
                 }
-                for (int i = 4; i < 8; i++)
+                for (int idxBlend2 = 4; idxBlend2 < 8; idxBlend2++)
                 {
-                    finalMetallic += metallic[i] * weights2[i - 4] * blendFactor;
-                    finalOcclusion *= lerp(1.0, occlusion[i], weights2[i - 4] * blendFactor);
-                    finalSmoothness += smoothness[i] * weights2[i - 4] * blendFactor;
+                    finalOcclusion *= lerp(1.0, occlusion[idxBlend2], weights2[idxBlend2 - 4] * blendFactor);
                 }
 
-                // Apply occlusion to albedo
                 baseColor *= finalOcclusion;
 
-                // Set up surface data for GBuffer
-                SurfaceData surfaceData = (SurfaceData)0;
-                surfaceData.albedo = baseColor;
-                surfaceData.specular = _SpecularColor.rgb;
-                surfaceData.metallic = finalMetallic;
-                surfaceData.smoothness = finalSmoothness;
-                surfaceData.occlusion = 1.0; // Occlusion already applied to albedo
-                surfaceData.emission = 0;
-                surfaceData.alpha = 1;
-                surfaceData.normalTS = normalTS;
-
-                InputData inputData = (InputData)0;
-                inputData.positionWS = IN.positionWS;
-                inputData.normalWS = normalWS;
-                inputData.shadowCoord = IN.shadowCoord;
-                inputData.bakedGI = SAMPLE_GI(IN.lightmapUV, IN.normalWS, IN.normalWS);
-                inputData.shadowMask = SAMPLE_SHADOWMASK(IN.lightmapUV);
-
-                // Output to GBuffer
-                BRDFData brdfData;
-                InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
-
-                half3 diffuse = brdfData.diffuse;
-                half3 specular = brdfData.specular;
-                half perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(surfaceData.smoothness);
-                half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
-
-                // GBuffer outputs
-                outGBuffer0 = half4(diffuse, surfaceData.occlusion);
-                outGBuffer1 = half4(specular, roughness);
-                outGBuffer2 = half4(normalWS * 0.5 + 0.5, surfaceData.alpha);
-                outGBuffer3 = half4(surfaceData.emission, 0);
-
-                // Depth output
-                outDepth = IN.positionCS.z;
+                MetaInput metaInput = (MetaInput)0;
+                metaInput.Albedo = baseColor;
+                metaInput.Emission = 0;
+                return MetaFragment(metaInput);
             }
             ENDHLSL
         }
     }
 
+    FallBack "Hidden/Universal Render Pipeline/FallbackError"
     CustomEditor "CustomShaderGUI.EightTextureShaderGUI"
-    Fallback "Hidden/Universal Render Pipeline/FallbackError"
 }
