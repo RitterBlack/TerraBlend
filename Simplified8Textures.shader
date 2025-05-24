@@ -120,6 +120,14 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
         _HeightMax5("Height Max 6 (cm)", Float) = 1
         _HeightMax6("Height Max 7 (cm)", Float) = 1
         _HeightMax7("Height Max 8 (cm)", Float) = 1
+        _HeightEdgeSmoothness0("Height Edge Smoothness 1", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness1("Height Edge Smoothness 2", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness2("Height Edge Smoothness 3", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness3("Height Edge Smoothness 4", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness4("Height Edge Smoothness 5", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness5("Height Edge Smoothness 6", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness6("Height Edge Smoothness 7", Range(0, 2)) = 0.1
+        _HeightEdgeSmoothness7("Height Edge Smoothness 8", Range(0, 2)) = 0.1
 
         _HeightTransparencyThreshold("Height Transparency Threshold", Range(0, 1)) = 0.5
 
@@ -253,6 +261,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7;
             float _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3;
             float _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7;
+            float _HeightEdgeSmoothness0, _HeightEdgeSmoothness1, _HeightEdgeSmoothness2, _HeightEdgeSmoothness3;
+            float _HeightEdgeSmoothness4, _HeightEdgeSmoothness5, _HeightEdgeSmoothness6, _HeightEdgeSmoothness7;
             float _HeightTransparencyThreshold;
             float4 _RemapRMinMax0, _RemapRMinMax1, _RemapRMinMax2, _RemapRMinMax3;
             float4 _RemapRMinMax4, _RemapRMinMax5, _RemapRMinMax6, _RemapRMinMax7;
@@ -304,10 +314,10 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             float4 positionCS : SV_POSITION;
             float2 uv : TEXCOORD0;
             float3 normalWS : TEXCOORD1;
-            float3 tangentWS : TEXcoord2;
+            float3 tangentWS : TEXCOORD2;
             float3 bitangentWS : TEXCOORD3;
-            float3 positionWS : TEXcoord4;
-            float4 fogFactorAndVertexLight : TEXcoord5;
+            float3 positionWS : TEXCOORD4;
+            float4 fogFactorAndVertexLight : TEXCOORD5;
             float4 shadowCoord : TEXCOORD6;
             float2 lightmapUV : TEXCOORD7;
             UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -324,7 +334,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
         }
 
-        float ComputeHeightBlendWeight(float height, float weight, float heightEnable, float heightParametrization, float heightAmplitude, float heightBase, float heightMin, float heightMax, float threshold)
+        float ComputeHeightBlendWeight(float height, float weight, float heightEnable, float heightParametrization, float heightAmplitude, float heightBase, float heightMin, float heightMax, float heightEdgeSmoothness, float threshold)
         {
             if (heightEnable < 0.5)
                 return weight;
@@ -339,8 +349,20 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                 scaledHeight = Remap(height, 0.0, 1.0, heightMin, heightMax);
             }
 
-            float transparencyFactor = smoothstep(threshold, 1.0, scaledHeight);
-            return weight * (1.0 - transparencyFactor) + weight * scaledHeight * transparencyFactor;
+            // Use heightEdgeSmoothness to control the spread of the layer
+            float edgeFactor = heightEdgeSmoothness * 2.0; // Scale smoothness for more pronounced effect
+            float blendRange = threshold * edgeFactor; // Dynamic range based on threshold and smoothness
+            float minEdge = max(0.0, threshold - blendRange);
+            float maxEdge = min(1.0, threshold + blendRange);
+
+            // Compute transition factor with smoothstep
+            float transitionFactor = smoothstep(minEdge, maxEdge, scaledHeight);
+
+            // Amplify weight based on height and smoothness to expand layer coverage
+            float amplifiedWeight = weight * (1.0 + heightEdgeSmoothness * transitionFactor);
+
+            // Combine original weight with height-based contribution
+            return lerp(weight, amplifiedWeight * transitionFactor, transitionFactor);
         }
 
         ENDHLSL
@@ -439,22 +461,26 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                                         _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
                 float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
                                         _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
+                float heightEdgeSmoothnesses[8] = { _HeightEdgeSmoothness0, _HeightEdgeSmoothness1, _HeightEdgeSmoothness2, _HeightEdgeSmoothness3,
+                                                    _HeightEdgeSmoothness4, _HeightEdgeSmoothness5, _HeightEdgeSmoothness6, _HeightEdgeSmoothness7 };
 
                 float heights[8];
                 float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
                                           weights2.r, weights2.g, weights2.b, weights2.a };
 
+                // Apply height blending without immediate normalization
                 for (int idxHeight = 0; idxHeight < 8; idxHeight++)
                 {
                     bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
                     heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
                     weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
-                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], heightEdgeSmoothnesses[idxHeight], _HeightTransparencyThreshold);
                 }
 
                 weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
                 weights2 = float4(weightsArray[4], weightsArray[5], weightsArray[6], weightsArray[7]);
 
+                // Normalize weights after height blending
                 float sumWeights1 = max(weights1.r + weights1.g + weights1.b + weights1.a, 0.001);
                 float sumWeights2 = max(weights2.r + weights2.g + weights2.b + weights2.a, 0.001);
                 weights1 /= sumWeights1;
@@ -708,7 +734,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
             {
                 float4 positionCS : SV_POSITION;
                 float3 normalWS : TEXCOORD1;
-                float3 tangentWS : TEXCOORD2;
+                float3 tangentWS : TEXcoord2;
                 float3 bitangentWS : TEXCOORD3;
                 float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -784,6 +810,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                                         _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
                 float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
                                         _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
+                float heightEdgeSmoothnesses[8] = { _HeightEdgeSmoothness0, _HeightEdgeSmoothness1, _HeightEdgeSmoothness2, _HeightEdgeSmoothness3,
+                                                    _HeightEdgeSmoothness4, _HeightEdgeSmoothness5, _HeightEdgeSmoothness6, _HeightEdgeSmoothness7 };
 
                 float heights[8];
                 float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
@@ -794,7 +822,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                     bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
                     heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
                     weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
-                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], heightEdgeSmoothnesses[idxHeight], _HeightTransparencyThreshold);
                 }
 
                 weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
@@ -935,6 +963,8 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                                         _HeightMin4, _HeightMin5, _HeightMin6, _HeightMin7 };
                 float heightMaxs[8] = { _HeightMax0, _HeightMax1, _HeightMax2, _HeightMax3,
                                         _HeightMax4, _HeightMax5, _HeightMax6, _HeightMax7 };
+                float heightEdgeSmoothnesses[8] = { _HeightEdgeSmoothness0, _HeightEdgeSmoothness1, _HeightEdgeSmoothness2, _HeightEdgeSmoothness3,
+                                                    _HeightEdgeSmoothness4, _HeightEdgeSmoothness5, _HeightEdgeSmoothness6, _HeightEdgeSmoothness7 };
 
                 float heights[8];
                 float weightsArray[8] = { weights1.r, weights1.g, weights1.b, weights1.a,
@@ -945,7 +975,7 @@ Shader "TerraBlend/URP/TerraBlend 8 Textures Manual"
                     bool hasMaskMap = !all(maskMaps[idxHeight] == float4(1,1,1,1));
                     heights[idxHeight] = hasMaskMap ? maskMaps[idxHeight].b : 0.0;
                     weightsArray[idxHeight] = ComputeHeightBlendWeight(heights[idxHeight], weightsArray[idxHeight], heightBlendEnables[idxHeight], heightParametrizations[idxHeight],
-                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], _HeightTransparencyThreshold);
+                                                                       heightAmplitudes[idxHeight], heightBases[idxHeight], heightMins[idxHeight], heightMaxs[idxHeight], heightEdgeSmoothnesses[idxHeight], _HeightTransparencyThreshold);
                 }
 
                 weights1 = float4(weightsArray[0], weightsArray[1], weightsArray[2], weightsArray[3]);
