@@ -18,9 +18,11 @@ namespace CustomShaderGUI
         private List<MaterialProperty> remapGMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> remapAMinMax = new List<MaterialProperty>();
         private List<MaterialProperty> layerVisibilities = new List<MaterialProperty>();
-        private List<MaterialProperty> colorTints = new List<MaterialProperty>(); // New list for color tints
+        private List<MaterialProperty> colorTints = new List<MaterialProperty>();
         private MaterialProperty control, control2, specularColor, enableNormalIntensity, mipMapBias, blendSmoothness;
         private bool[] maskMapFoldouts = new bool[8];
+        private enum DisplaySection { Layers, ControlMap, GlobalSettings }
+        private DisplaySection currentSection = DisplaySection.Layers; // Початкова секція
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -31,34 +33,66 @@ namespace CustomShaderGUI
 
             EditorGUI.BeginChangeCheck();
 
-            // Determine the number of active layers, used layers, and hidden layers
+            // Визначаємо активні та використані шари
             var (activeLayers, usedLayers, hiddenLayers) = GetActiveAndUsedLayerInfo(material);
 
-            // Display active and hidden layer counts
-            EditorGUILayout.LabelField($"Layers (Active: {activeLayers}, Hidden: {hiddenLayers})", EditorStyles.boldLabel);
-            for (int i = 0; i < splats.Count; i++)
+            // Відображаємо кнопки для вибору секції
+            DrawSectionButtons();
+
+            // Відображаємо відповідну секцію
+            switch (currentSection)
             {
-                // Display only layers that are used (based on Control or Control2)
-                if (usedLayers[i])
-                {
-                    DrawLayerSection(materialEditor, material, i, usedLayers, $"Layer {i + 1}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
-                        remapRMinMax[i], remapGMinMax[i], remapAMinMax[i], colorTints[i]);
-                    GUILayout.Space(5);
-                }
+                case DisplaySection.Layers:
+                    EditorGUILayout.LabelField($"Layers (Active: {activeLayers}, Hidden: {hiddenLayers})", EditorStyles.boldLabel);
+                    for (int i = 0; i < splats.Count; i++)
+                    {
+                        if (usedLayers[i])
+                        {
+                            // Отримуємо назву текстури Albedo
+                            string textureName = splats[i].textureValue != null ? splats[i].textureValue.name : $"Layer {i + 1}";
+                            DrawLayerSection(materialEditor, material, i, usedLayers, $"Layer {i + 1}: {textureName}", splats[i], normals[i], normalIntensities[i], smoothness[i], maskMaps[i],
+                                remapRMinMax[i], remapGMinMax[i], remapAMinMax[i], colorTints[i]);
+                            GUILayout.Space(5);
+                        }
+                    }
+                    break;
+
+                case DisplaySection.ControlMap:
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Control Map", EditorStyles.boldLabel);
+                    DrawControlSection(materialEditor);
+                    break;
+
+                case DisplaySection.GlobalSettings:
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Global Settings", EditorStyles.boldLabel);
+                    DrawGlobalSettingsSection(materialEditor);
+                    break;
             }
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Control Map", EditorStyles.boldLabel);
-            DrawControlSection(materialEditor);
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Global Settings", EditorStyles.boldLabel);
-            DrawGlobalSettingsSection(materialEditor);
 
             if (EditorGUI.EndChangeCheck())
             {
                 materialEditor.PropertiesChanged();
             }
+        }
+
+        private void DrawSectionButtons()
+        {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Layers", EditorStyles.toolbarButton))
+            {
+                currentSection = DisplaySection.Layers;
+            }
+            if (GUILayout.Button("Control Map", EditorStyles.toolbarButton))
+            {
+                currentSection = DisplaySection.ControlMap;
+            }
+            if (GUILayout.Button("Global Settings", EditorStyles.toolbarButton))
+            {
+                currentSection = DisplaySection.GlobalSettings;
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space();
         }
 
         private void FindProperties()
@@ -72,7 +106,7 @@ namespace CustomShaderGUI
             remapGMinMax.Clear();
             remapAMinMax.Clear();
             layerVisibilities.Clear();
-            colorTints.Clear(); // Clear color tints list
+            colorTints.Clear();
 
             int layerIndex = 0;
             while (true)
@@ -88,7 +122,7 @@ namespace CustomShaderGUI
                 remapGMinMax.Add(FindProperty($"_RemapGMinMax{layerIndex}", properties, false));
                 remapAMinMax.Add(FindProperty($"_RemapAMinMax{layerIndex}", properties, false));
                 layerVisibilities.Add(FindProperty($"_LayerVisibility{layerIndex}", properties, false));
-                colorTints.Add(FindProperty($"_ColorTint{layerIndex}", properties, false)); // Add color tint property
+                colorTints.Add(FindProperty($"_ColorTint{layerIndex}", properties, false));
                 layerIndex++;
             }
 
@@ -106,7 +140,6 @@ namespace CustomShaderGUI
             int hiddenLayers = 0;
             bool[] usedLayers = new bool[splats.Count];
 
-            // Check _Control texture (controls layers 0-3: R, G, B, A)
             if (control != null && control.textureValue != null)
             {
                 Texture2D controlTex = control.textureValue as Texture2D;
@@ -180,7 +213,6 @@ namespace CustomShaderGUI
                 }
             }
 
-            // Check _Control2 texture (controls layers 4-7: R, G, B, A)
             if (control2 != null && control2.textureValue != null)
             {
                 Texture2D controlTex2 = control2.textureValue as Texture2D;
@@ -254,7 +286,6 @@ namespace CustomShaderGUI
                 }
             }
 
-            // Clamp to the number of available splat textures
             activeLayers = Mathf.Min(activeLayers, splats.Count);
             return (activeLayers, usedLayers, hiddenLayers);
         }
@@ -264,22 +295,19 @@ namespace CustomShaderGUI
             MaterialProperty intensityProp, MaterialProperty smoothnessProp,
             MaterialProperty maskMapProp, MaterialProperty remapRMinMaxProp,
             MaterialProperty remapGMinMaxProp, MaterialProperty remapAMinMaxProp,
-            MaterialProperty colorTintProp) // Added colorTintProp parameter
+            MaterialProperty colorTintProp)
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
 
             EditorGUILayout.BeginHorizontal();
 
-            // Draw Up/Down and Hide/Show buttons inside the box, top-left
             EditorGUILayout.BeginVertical(GUILayout.Width(30));
             bool originalGUIEnabled = GUI.enabled;
-            // Up button active if layer is not first
             GUI.enabled = layerIndex > 0;
             if (GUILayout.Button("↑", GUILayout.Width(30), GUILayout.Height(20)))
             {
                 SwapLayerProperties(material, layerIndex, layerIndex - 1);
             }
-            // Down button active if there is a used layer below
             GUI.enabled = false;
             for (int i = layerIndex + 1; i < usedLayers.Length; i++)
             {
@@ -293,7 +321,6 @@ namespace CustomShaderGUI
             {
                 SwapLayerProperties(material, layerIndex, layerIndex + 1);
             }
-            // Hide/Show button always active
             GUI.enabled = true;
             bool isVisible = layerVisibilities[layerIndex].floatValue > 0;
             if (GUILayout.Button(isVisible ? "H" : "V", GUILayout.Width(30), GUILayout.Height(20)))
@@ -305,21 +332,18 @@ namespace CustomShaderGUI
             GUI.enabled = originalGUIEnabled;
             EditorGUILayout.EndVertical();
 
-            // Draw the layer content
             EditorGUILayout.BeginVertical();
 
-            // Indicate layer status (Visible or Hidden)
+            // Відображаємо назву шару та стан (Visible/Hidden)
             string statusLabel = isVisible ? "(Visible)" : "(Hidden)";
             EditorGUILayout.LabelField($"{displayName} {statusLabel}", EditorStyles.boldLabel);
 
-            // Disable interaction for texture and settings fields if layer is hidden
             GUI.enabled = isVisible && originalGUIEnabled;
 
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginHorizontal(GUIStyle.none);
 
-            // Base Color Texture (Albedo)
             Rect textureRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newTexture = (Texture)EditorGUI.ObjectField(new Rect(textureRect.x, textureRect.y, 70, 70), textureProp.textureValue, typeof(Texture), false);
@@ -329,7 +353,6 @@ namespace CustomShaderGUI
                 textureProp.textureValue = newTexture;
             }
 
-            // Normal Map
             Rect normalRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newNormal = (Texture)EditorGUI.ObjectField(new Rect(normalRect.x, normalRect.y, 70, 70), normalProp.textureValue, typeof(Texture), false);
@@ -339,7 +362,6 @@ namespace CustomShaderGUI
                 normalProp.textureValue = newNormal;
             }
 
-            // Mask Map
             Rect maskRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newMask = (Texture)EditorGUI.ObjectField(new Rect(maskRect.x, maskRect.y, 70, 70), maskMapProp.textureValue, typeof(Texture), false);
@@ -372,7 +394,6 @@ namespace CustomShaderGUI
             float offsetY = EditorGUILayout.FloatField(tilingOffset.w, GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
-            // Apply tiling and offset to albedo, normal, and mask map
             textureProp.textureScaleAndOffset = new Vector4(tilingX, tilingY, offsetX, offsetY);
             normalProp.textureScaleAndOffset = textureProp.textureScaleAndOffset;
             if (maskMapProp != null && maskMapProp.textureValue != null)
@@ -384,19 +405,16 @@ namespace CustomShaderGUI
 
             EditorGUILayout.EndHorizontal();
 
-            // Show Normal Intensity only if ENABLE_NORMAL_INTENSITY is toggled
             if (enableNormalIntensity.floatValue > 0)
             {
                 editor.RangeProperty(intensityProp, "Normal Intensity");
             }
 
-            // Show Color Tint field
             if (colorTintProp != null)
             {
                 editor.ColorProperty(colorTintProp, "Color Tint");
             }
 
-            // Show smoothness slider if no mask map, otherwise show remapping sliders with foldout
             if (maskMapProp == null || maskMapProp.textureValue == null)
             {
                 editor.RangeProperty(smoothnessProp, "Smoothness");
@@ -406,13 +424,12 @@ namespace CustomShaderGUI
                 maskMapFoldouts[layerIndex] = EditorGUILayout.Foldout(maskMapFoldouts[layerIndex], "Channel Remapping", true);
                 if (maskMapFoldouts[layerIndex])
                 {
-                    DrawMinMaxSlider(editor, remapRMinMaxProp, "Metallic Range");
-                    DrawMinMaxSlider(editor, remapGMinMaxProp, "AO Range");
-                    DrawMinMaxSlider(editor, remapAMinMaxProp, "Smoothness Range");
+                    DrawMinMaxSlider(editor, remapRMinMaxProp, "R: Metallic Range");
+                    DrawMinMaxSlider(editor, remapGMinMaxProp, "G: AO Range");
+                    DrawMinMaxSlider(editor, remapAMinMaxProp, "A: Smoothness Range");
                 }
             }
 
-            // Restore GUI.enabled after all fields
             GUI.enabled = originalGUIEnabled;
 
             EditorGUILayout.EndVertical();
@@ -442,7 +459,6 @@ namespace CustomShaderGUI
 
             EditorGUILayout.BeginHorizontal(GUIStyle.none);
 
-            // Control texture (Layers 1-4)
             Rect controlRect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newControl = (Texture)EditorGUI.ObjectField(new Rect(controlRect.x, controlRect.y, 70, 70), control.textureValue, typeof(Texture), false);
@@ -452,7 +468,6 @@ namespace CustomShaderGUI
                 control.textureValue = newControl;
             }
 
-            // Control2 texture (Layers 5-8)
             Rect control2Rect = EditorGUILayout.GetControlRect(false, 70, GUILayout.Width(70));
             EditorGUI.BeginChangeCheck();
             Texture newControl2 = (Texture)EditorGUI.ObjectField(new Rect(control2Rect.x, control2Rect.y, 70, 70), control2.textureValue, typeof(Texture), false);
@@ -485,7 +500,6 @@ namespace CustomShaderGUI
             float offsetY = EditorGUILayout.FloatField(controlTilingOffset.w, GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
-            // Apply tiling and offset to both control textures
             control.textureScaleAndOffset = new Vector4(tilingX, tilingY, offsetX, offsetY);
             control2.textureScaleAndOffset = new Vector4(tilingX, tilingY, offsetX, offsetY);
 
@@ -510,7 +524,6 @@ namespace CustomShaderGUI
         {
             Undo.RecordObject(material, "Swap Terrain Layers");
 
-            // Swap textures
             Texture tempTexture = splats[indexA].textureValue;
             splats[indexA].textureValue = splats[indexB].textureValue;
             splats[indexB].textureValue = tempTexture;
@@ -523,7 +536,6 @@ namespace CustomShaderGUI
             maskMaps[indexA].textureValue = maskMaps[indexB].textureValue;
             maskMaps[indexB].textureValue = tempTexture;
 
-            // Swap texture scale and offset
             Vector4 tempScaleOffset = splats[indexA].textureScaleAndOffset;
             splats[indexA].textureScaleAndOffset = splats[indexB].textureScaleAndOffset;
             splats[indexB].textureScaleAndOffset = tempScaleOffset;
@@ -536,7 +548,6 @@ namespace CustomShaderGUI
             if (maskMaps[indexB].textureValue != null)
                 maskMaps[indexB].textureScaleAndOffset = splats[indexB].textureScaleAndOffset;
 
-            // Swap float values
             float tempFloat = normalIntensities[indexA].floatValue;
             normalIntensities[indexA].floatValue = normalIntensities[indexB].floatValue;
             normalIntensities[indexB].floatValue = tempFloat;
@@ -545,12 +556,10 @@ namespace CustomShaderGUI
             smoothness[indexA].floatValue = smoothness[indexB].floatValue;
             smoothness[indexB].floatValue = tempFloat;
 
-            // Swap visibility
             tempFloat = layerVisibilities[indexA].floatValue;
             layerVisibilities[indexA].floatValue = layerVisibilities[indexB].floatValue;
             layerVisibilities[indexB].floatValue = tempFloat;
 
-            // Swap color tint
             if (colorTints[indexA] != null && colorTints[indexB] != null)
             {
                 Color tempColor = colorTints[indexA].colorValue;
@@ -558,7 +567,6 @@ namespace CustomShaderGUI
                 colorTints[indexB].colorValue = tempColor;
             }
 
-            // Swap vector values
             Vector4 tempVector = remapRMinMax[indexA].vectorValue;
             remapRMinMax[indexA].vectorValue = remapRMinMax[indexB].vectorValue;
             remapRMinMax[indexB].vectorValue = tempVector;
@@ -571,7 +579,6 @@ namespace CustomShaderGUI
             remapAMinMax[indexA].vectorValue = remapAMinMax[indexB].vectorValue;
             remapAMinMax[indexB].vectorValue = tempVector;
 
-            // Force material update
             EditorUtility.SetDirty(material);
         }
 
