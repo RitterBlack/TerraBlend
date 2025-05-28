@@ -12,7 +12,7 @@ TerraBlend 8 Textures Shader is a custom shader for Unity's Universal Render Pip
 - Customizable Tiling and Offset: Each layer supports independent tiling and offset settings for texture customization.
 - Specular Highlights: Configurable specular color and strength for enhanced lighting effects.
 - MipMap Bias: Adjustable mip map bias for controlling texture sharpness or blurriness.
-- Custom Shader GUI: Comes with a tailored Unity Editor GUI (EightTextureShaderGUI.cs) for intuitive material configuration, including:
+- Custom Shader GUI: Comes with a tailored Unity Editor GUI (EightTextureShaderGUI.cs) for intuitive material configuration, including.
 
 **Requirements:**
 - Unity 2021.3+ with Universal Render Pipeline (URP)
